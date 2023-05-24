@@ -324,7 +324,7 @@ public class VectorPlayaEstacionamiento {
                         .build();
                 eventoFinCobro = EventoFinCobro.builder()
                         .tiempoCobro(2)
-                        .finAtCobro(simulacion.getReloj() + 5)
+                        .finAtCobro(simulacion.getReloj() + 2)
                         .nroAuto(nroAuto)
                         .nroEstacionamiento(nroEstacionamiento)
                         .auto(autoMap)
@@ -342,7 +342,7 @@ public class VectorPlayaEstacionamiento {
                     .build();
             eventoFinCobro = EventoFinCobro.builder()
                     .tiempoCobro(2)
-                    .finAtCobro(simulacion.getReloj() + 5)
+                    .finAtCobro(simulacion.getReloj() + 2)
                     .nroAuto(nroAuto)
                     .nroEstacionamiento(nroEstacionamiento)
                     .auto(autoMap)
@@ -399,7 +399,7 @@ public class VectorPlayaEstacionamiento {
 
                 simulacion.setEventoFinCobro(EventoFinCobro.builder()
                         .tiempoCobro(2)
-                        .finAtCobro(simulacion.getReloj() + 5)
+                        .finAtCobro(simulacion.getReloj() + 2)
                         .nroAuto(autoEsperandoCobro.getId())
                         .nroEstacionamiento(autoEsperandoCobro.getNroFinEstacionamiento())
                         .auto(autoEsperandoCobro)
@@ -416,11 +416,14 @@ public class VectorPlayaEstacionamiento {
 
         }
 
+        
         simulacion.setSectores(simulacionAnterior.getSectores());
         simulacion.setVariablesEstadisticas(VariablesEstadisticas.builder()
                 .recaudacion(simulacionAnterior.getEventoFinCobro().getAuto().getPrecioXMinutos())
                 .build());
 
+        autosEsperandoCobro.remove(simulacionAnterior.getEventoFinCobro().getAuto().getHoraEntradaCobro());
+        simulacion.setAutosEsperandoCobro(autosEsperandoCobro);
         simulaciones.add(simulacion);
     }
 

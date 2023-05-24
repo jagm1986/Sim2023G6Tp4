@@ -482,7 +482,7 @@ public class Principal extends javax.swing.JFrame {
             fallo = true;
 
         }
-        
+
         if (Double.parseDouble(prob1HS.getText())
                 + Double.parseDouble(prob2HS.getText())
                 + Double.parseDouble(prob4HS.getText())
@@ -496,7 +496,7 @@ public class Principal extends javax.swing.JFrame {
 
         if (fallo == false) {
 
-            if (Integer.parseInt(txtN.getText()) < 100001 & Integer.parseInt(txtN.getText()) > 0) {
+            if (Integer.parseInt(txtN.getText()) < 1000001 & Integer.parseInt(txtN.getText()) > 0) {
                 manejador.setN(Integer.parseInt(txtN.getText()));
                 fallo = false;
             } else {
@@ -505,20 +505,19 @@ public class Principal extends javax.swing.JFrame {
                 fallo = true;
             }
 
-
             if (fallo == false) {
-                
+
                 int cantidadSimulaciones = Integer.parseInt(txtN.getText());
 
                 manejador.crearSimulaciones(cantidadSimulaciones, (float) Double.parseDouble(tpoEntreLlegadas.getText()),
                         Double.parseDouble(probChico.getText()),
                         Double.parseDouble(probGrande.getText()),
-                        Double.parseDouble(probUtilitario.getText()), 
-                        Double.parseDouble(prob1HS.getText()), 
-                        Double.parseDouble(prob2HS.getText()), 
+                        Double.parseDouble(probUtilitario.getText()),
+                        Double.parseDouble(prob1HS.getText()),
+                        Double.parseDouble(prob2HS.getText()),
                         Double.parseDouble(prob3HS.getText()),
                         Double.parseDouble(prob4HS.getText()),
-                        Double.parseDouble(tpoCobro.getText())); 
+                        Double.parseDouble(tpoCobro.getText()));
 
                 //Carga de grilla
                 TablaIntervalos filas = new TablaIntervalos(manejador.getSimulaciones());
@@ -526,8 +525,7 @@ public class Principal extends javax.swing.JFrame {
 
                 recaudacionTotal.setText(String.valueOf(filas.getRecaudacionTotal()));
                 cantidadAutosNoIngresados.setText(String.valueOf(filas.getCantidadAutosNoIngresadosTotal()));
-                porcUtilizacion.setText(String.valueOf(Math.floor(filas.getProcentajeUtilizacionPlaya() * 100) / 100) + " %" );
-
+                porcUtilizacion.setText(String.valueOf(Math.floor(filas.getProcentajeUtilizacionPlaya() * 100) / 100) + " %");
 
             }
         }
