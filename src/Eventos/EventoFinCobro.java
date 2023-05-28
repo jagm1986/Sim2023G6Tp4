@@ -14,7 +14,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class EventoFinCobro {
 
-    private long tiempoCobro;
+    private double tiempoCobro;
     private double finAtCobro;
     private int nroAuto;
     private int nroEstacionamiento;

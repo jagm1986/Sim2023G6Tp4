@@ -11,5 +11,7 @@ package enums;
 public enum EstadoAuto {
     ESTACIONADO,
     ESPERANDO_COBRO,
-    SIENDO_COBRADO;
+    SIENDO_COBRADO,
+    ELIMINADO,
+    NO_INGRESADO;
 }

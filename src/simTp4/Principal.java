@@ -1,8 +1,7 @@
 package simTp4;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import java.util.stream.IntStream;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -26,7 +25,38 @@ public class Principal extends javax.swing.JFrame {
         probGrande.setText("");
         prob1HS.setText("");
         probUtilitario.setText("");
+        txtDesde.setText("");
+        txtHasta.setText("");
 
+    }
+
+    private void setColumnSize(javax.swing.JTable tabla) {
+        tabla.getColumn("Nro").setMinWidth(20);
+        tabla.getColumn("Reloj").setMinWidth(36);
+        tabla.getColumn("Evento").setMinWidth(200);
+        tabla.getColumn("RndTC").setMinWidth(36);
+        tabla.getColumn("Tipo_Coche").setMinWidth(100);
+        tabla.getColumn("Precio").setMinWidth(36);
+        tabla.getColumn("Rnd_Min").setMinWidth(36);
+        tabla.getColumn("Minutos").setMinWidth(36);
+        tabla.getColumn("Rnd_Llegada_Auto").setMinWidth(150);
+        tabla.getColumn("TpoELLg").setMinWidth(36);
+        tabla.getColumn("Proximo_Auto").setMinWidth(100);
+        tabla.getColumn("Nro_FinEst").setMinWidth(80);
+        tabla.getColumn("Fin_Estacionamiento").setMinWidth(150);
+        tabla.getColumn("Nro_Sector").setMinWidth(100);
+        tabla.getColumn("Estado_Sector").setMinWidth(150);
+        tabla.getColumn("Fin_Cobro").setMinWidth(75);
+        tabla.getColumn("Caja_Estado").setMinWidth(75);
+        tabla.getColumn("Caja_Cola").setMinWidth(75);
+        tabla.getColumn("Recaudacion").setMinWidth(75);
+        tabla.getColumn("Autos_No_Ingresados").setMinWidth(200);
+        tabla.getColumn("Porc_Utilizacion").setMinWidth(150);
+        tabla.getColumn("Recaudacion_Total").setMinWidth(150);
+        tabla.getColumn("Porc_UtilizacionTotal").setMinWidth(150);
+        tabla.getColumn("Autos_No_Ingresados_AC").setMinWidth(150);
+        tabla.getColumn("Cantidad_Sectores_Ocupados").setMinWidth(200);
+        tabla.getColumn("Autos").setMinWidth(300);
     }
 
     @SuppressWarnings("unchecked")
@@ -76,6 +106,11 @@ public class Principal extends javax.swing.JFrame {
         prob4HS = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         tpoCobro = new javax.swing.JTextField();
+        txtDesde = new javax.swing.JTextField();
+        txtHasta = new javax.swing.JTextField();
+        jLabel16 = new javax.swing.JLabel();
+        jLabel20 = new javax.swing.JLabel();
+        btnMostrarIntervalos = new javax.swing.JButton();
 
         jLabel14.setFont(new java.awt.Font("Cambria", 3, 14)); // NOI18N
         jLabel14.setText("Seleccione la cantidad de intervalos");
@@ -112,7 +147,7 @@ public class Principal extends javax.swing.JFrame {
             }
         });
 
-        txtN.setText("3");
+        txtN.setText("30000");
 
         jLabel13.setFont(new java.awt.Font("Cambria Math", 1, 14)); // NOI18N
         jLabel13.setText("N");
@@ -124,7 +159,6 @@ public class Principal extends javax.swing.JFrame {
             }
         });
 
-        tabla.setAutoCreateRowSorter(true);
         tabla.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {},
@@ -254,6 +288,23 @@ public class Principal extends javax.swing.JFrame {
             }
         });
 
+        txtDesde.setText("1");
+
+        txtHasta.setText("50");
+
+        jLabel16.setFont(new java.awt.Font("Cambria Math", 1, 14)); // NOI18N
+        jLabel16.setText("Desde");
+
+        jLabel20.setFont(new java.awt.Font("Cambria Math", 1, 14)); // NOI18N
+        jLabel20.setText("Hasta");
+
+        btnMostrarIntervalos.setText("Mostrar");
+        btnMostrarIntervalos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMostrarIntervalosActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout panelLayout = new javax.swing.GroupLayout(panel);
         panel.setLayout(panelLayout);
         panelLayout.setHorizontalGroup(
@@ -269,7 +320,7 @@ public class Principal extends javax.swing.JFrame {
                                         .addComponent(lblB1, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addComponent(jLabel5)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 137, Short.MAX_VALUE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 139, Short.MAX_VALUE)
                                         .addComponent(lblB))
                                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelLayout.createSequentialGroup()
                                         .addGap(0, 0, Short.MAX_VALUE)
@@ -296,13 +347,35 @@ public class Principal extends javax.swing.JFrame {
                                 .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel27, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jLabel23, javax.swing.GroupLayout.PREFERRED_SIZE, 411, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                    .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelLayout.createSequentialGroup()
+                                        .addGap(0, 133, Short.MAX_VALUE)
+                                        .addComponent(jLabel13)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(txtN, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(32, 32, 32)
+                                        .addComponent(btnGenerar, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(52, 52, 52)))
                                 .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(recaudacionTotal)
-                                    .addComponent(cantidadAutosNoIngresados, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(porcUtilizacion, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(265, 265, 265))
+                                    .addGroup(panelLayout.createSequentialGroup()
+                                        .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(recaudacionTotal, javax.swing.GroupLayout.DEFAULT_SIZE, 73, Short.MAX_VALUE)
+                                            .addComponent(cantidadAutosNoIngresados, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(porcUtilizacion, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGap(265, 265, 265))
+                                    .addGroup(panelLayout.createSequentialGroup()
+                                        .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                            .addGroup(panelLayout.createSequentialGroup()
+                                                .addComponent(jLabel20)
+                                                .addGap(18, 18, 18)
+                                                .addComponent(txtHasta, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                            .addGroup(panelLayout.createSequentialGroup()
+                                                .addComponent(jLabel16)
+                                                .addGap(18, 18, 18)
+                                                .addComponent(txtDesde, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                        .addGap(18, 18, 18)
+                                        .addComponent(btnMostrarIntervalos, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(0, 0, Short.MAX_VALUE))))
                             .addComponent(jScrollPane1))
                         .addGap(31, 31, 31))
                     .addGroup(panelLayout.createSequentialGroup()
@@ -332,14 +405,6 @@ public class Principal extends javax.swing.JFrame {
                                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 221, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(0, 0, Short.MAX_VALUE)))))
                 .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel13)
-                .addGap(38, 38, 38)
-                .addComponent(txtN, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(32, 32, 32)
-                .addComponent(btnGenerar, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(431, 431, 431))
         );
         panelLayout.setVerticalGroup(
             panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -351,9 +416,9 @@ public class Principal extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(lblIntegrantes, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(51, 51, 51)
-                        .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel15)
-                            .addComponent(recaudacionTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel15, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(recaudacionTotal, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel23)
@@ -367,12 +432,13 @@ public class Principal extends javax.swing.JFrame {
                             .addComponent(prob3HS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel26)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelLayout.createSequentialGroup()
-                        .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(tpoEntreLlegadas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(tpoCobro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jLabel3)
-                                .addComponent(jLabel2)))
+                        .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(tpoCobro, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel3)
+                                    .addComponent(jLabel2)))
+                            .addComponent(tpoEntreLlegadas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addGroup(panelLayout.createSequentialGroup()
@@ -408,8 +474,15 @@ public class Principal extends javax.swing.JFrame {
                     .addComponent(jLabel13)
                     .addComponent(jLabel28)
                     .addComponent(jLabel29)
-                    .addComponent(prob4HS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(36, 36, 36)
+                    .addComponent(prob4HS, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel16)
+                    .addComponent(txtDesde, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnMostrarIntervalos))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtHasta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel20))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 395, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(104, 104, 104)
                 .addComponent(lblResultadoPrueba, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -420,16 +493,16 @@ public class Principal extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
                 .addComponent(panel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGap(0, 12, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 12, Short.MAX_VALUE)
-                .addComponent(panel, javax.swing.GroupLayout.PREFERRED_SIZE, 720, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(panel, javax.swing.GroupLayout.PREFERRED_SIZE, 720, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -496,7 +569,7 @@ public class Principal extends javax.swing.JFrame {
 
         if (fallo == false) {
 
-            if (Integer.parseInt(txtN.getText()) < 1000001 & Integer.parseInt(txtN.getText()) > 0) {
+            if (Integer.parseInt(txtN.getText()) < 100001 & Integer.parseInt(txtN.getText()) > 0) {
                 manejador.setN(Integer.parseInt(txtN.getText()));
                 fallo = false;
             } else {
@@ -520,12 +593,20 @@ public class Principal extends javax.swing.JFrame {
                         Double.parseDouble(tpoCobro.getText()));
 
                 //Carga de grilla
-                TablaIntervalos filas = new TablaIntervalos(manejador.getSimulaciones());
+                Integer desde = Integer.parseInt(txtDesde.getText());
+                int hasta = Integer.parseInt(txtHasta.getText());
+                List<PlayaEstacionamiento> listaDesdeHasta = IntStream.range(desde, hasta)
+                        .mapToObj(i -> manejador.getSimulaciones().get(i))
+                        .toList();
+
+                TablaIntervalos filas = new TablaIntervalos(listaDesdeHasta);
                 tabla.setModel(filas);
 
                 recaudacionTotal.setText(String.valueOf(filas.getRecaudacionTotal()));
                 cantidadAutosNoIngresados.setText(String.valueOf(filas.getCantidadAutosNoIngresadosTotal()));
                 porcUtilizacion.setText(String.valueOf(Math.floor(filas.getProcentajeUtilizacionPlaya() * 100) / 100) + " %");
+
+                setColumnSize(tabla);
 
             }
         }
@@ -547,6 +628,24 @@ public class Principal extends javax.swing.JFrame {
     private void tpoCobroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tpoCobroActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_tpoCobroActionPerformed
+
+    private void btnMostrarIntervalosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMostrarIntervalosActionPerformed
+        //Carga de grilla
+        Integer desde = Integer.parseInt(txtDesde.getText());
+        int hasta = Integer.parseInt(txtHasta.getText());
+        List<PlayaEstacionamiento> listaDesdeHasta = IntStream.range(desde, hasta)
+                .mapToObj(i -> manejador.getSimulaciones().get(i))
+                .toList();
+
+        TablaIntervalos filas = new TablaIntervalos(listaDesdeHasta);
+        tabla.setModel(filas);
+
+        recaudacionTotal.setText(String.valueOf(filas.getRecaudacionTotal()));
+        cantidadAutosNoIngresados.setText(String.valueOf(filas.getCantidadAutosNoIngresadosTotal()));
+        porcUtilizacion.setText(String.valueOf(Math.floor(filas.getProcentajeUtilizacionPlaya() * 100) / 100) + " %");
+
+        setColumnSize(tabla);
+    }//GEN-LAST:event_btnMostrarIntervalosActionPerformed
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
@@ -576,6 +675,7 @@ public class Principal extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnGenerar;
+    private javax.swing.JButton btnMostrarIntervalos;
     private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.JTextField cantidadAutosNoIngresados;
     private javax.swing.ButtonGroup grupoCantidadIntervalos;
@@ -585,10 +685,12 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel24;
     private javax.swing.JLabel jLabel25;
@@ -617,6 +719,8 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JTable tabla;
     private javax.swing.JTextField tpoCobro;
     private javax.swing.JTextField tpoEntreLlegadas;
+    private javax.swing.JTextField txtDesde;
+    private javax.swing.JTextField txtHasta;
     private javax.swing.JTextField txtN;
     // End of variables declaration//GEN-END:variables
 }

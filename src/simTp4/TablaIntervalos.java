@@ -3,7 +3,7 @@ package simTp4;
 import Eventos.EventoFinEstacionamiento;
 import ObjetosPermanentes.Sector;
 import ObjetosTemporales.Auto;
-import java.util.ArrayList;
+import java.text.DecimalFormat;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
 import lombok.AllArgsConstructor;
@@ -19,8 +19,9 @@ import lombok.Setter;
 @NoArgsConstructor
 public class TablaIntervalos extends DefaultTableModel {
 
+    private static final DecimalFormat df = new DecimalFormat("0.000");
     private double cantidadAutosNoIngresadosTotal;
-    private double recaudacionTotal;
+    private String recaudacionTotal;
     private double procentajeUtilizacionPlaya;
 
     public TablaIntervalos(List<PlayaEstacionamiento> filasTabla) {
@@ -77,38 +78,56 @@ public class TablaIntervalos extends DefaultTableModel {
             acumuladorCantidadAutosNoIngresados += simulacion.getVariablesEstadisticas().getCantidadAutosNoIngresados();
 
             matrizTabla[i][15] = simulacion.getEventoFinCobro() != null ? simulacion.getEventoFinCobro().getFinAtCobro() : 0;
-            matrizTabla[i][16] = simulacion.getCajaCobro() != null ? simulacion.getCajaCobro().getEstadoCaja(): "";
-            matrizTabla[i][17] = simulacion.getCajaCobro() != null ? simulacion.getCajaCobro().getCola(): 0;
+            matrizTabla[i][16] = simulacion.getCajaCobro() != null ? simulacion.getCajaCobro().getEstadoCaja() : "";
+            matrizTabla[i][17] = simulacion.getCajaCobro() != null ? simulacion.getCajaCobro().getCola() : 0;
             matrizTabla[i][18] = simulacion.getVariablesEstadisticas().getRecaudacion();
             matrizTabla[i][19] = simulacion.getVariablesEstadisticas().getCantidadAutosNoIngresados();
-            matrizTabla[i][20] = simulacion.getVariablesEstadisticas().getPorcentajeUtilizacionPlaya();
+            matrizTabla[i][20] = df.format(simulacion.getVariablesEstadisticas().getPorcentajeUtilizacionPlaya());
 
-            matrizTabla[i][21] = acumuladorRecaudacion;
-            matrizTabla[i][22] = acumuladorPorcUtilizacionPlaya;
+            matrizTabla[i][21] = df.format(acumuladorRecaudacion);
+            matrizTabla[i][22] = df.format(acumuladorPorcUtilizacionPlaya);
             matrizTabla[i][23] = acumuladorCantidadAutosNoIngresados;
             matrizTabla[i][24] = simulacion.getCantidadOcupados();
 
-            i = i + 13;
+            i = iAnteriorAlLoop;
+            /* for (Map.Entry<Integer, String> entry : simulacion.getAutosTotales().entrySet()) {
+
+                i++;
+                matrizTabla[i][25] = entry.getKey() + ": " + entry.getValue();
+                
+            }
+             */
+
+            for (Auto autoAMostrar : simulacion.getAutosTotalesList()) {
+                i++;
+                matrizTabla[i][25] = "PATENTE: " + autoAMostrar.getId() + ": " + autoAMostrar.getEstadoAuto();
+            }
+
+            i = iAnteriorAlLoop + 1;
+
+            int j = simulacion.getAutosTotalesList().size() > 15 ? simulacion.getAutosTotalesList().size() : 15;
+            i = i + j;
         }
 
-        this.recaudacionTotal = acumuladorRecaudacion;
+        this.recaudacionTotal = df.format(acumuladorRecaudacion);
         this.cantidadAutosNoIngresadosTotal = acumuladorCantidadAutosNoIngresados;
         this.procentajeUtilizacionPlaya = acumuladorPorcUtilizacionPlaya * 100 / filasTabla.get(filasTabla.size() - 1).getReloj();
 
         String[] NombresDeColumnas = new String[]{"Nro", "Reloj", "Evento", "RndTC",
-            "Tipo_Coche", "Precio", "Rnd Minutos", "Minutos", "Rnd Llegada Auto",
-            "TpoELLg", "Proximo_Auto", "Nro_FinEst", "FinEstacionamiento", "Nro Sector",
-            "Estado Sector", "Fin_Cobro", "Caja-Estado", "Caja-Cola", "Recaudacion", "Autos No Ingresados", "PorUtilizacion",
-            "RecaudacionTotal", "PorUtilizacionTotal", "ANIAC", "Cantidad Ocupados"
+            "Tipo_Coche", "Precio", "Rnd_Min", "Minutos", "Rnd_Llegada_Auto",
+            "TpoELLg", "Proximo_Auto", "Nro_FinEst", "Fin_Estacionamiento", "Nro_Sector",
+            "Estado_Sector", "Fin_Cobro", "Caja_Estado", "Caja_Cola", "Recaudacion", "Autos_No_Ingresados", "Porc_Utilizacion",
+            "Recaudacion_Total", "Porc_UtilizacionTotal", "Autos_No_Ingresados_AC", "Cantidad_Sectores_Ocupados", "Autos"
         };
 
         this.setDataVector(matrizTabla, NombresDeColumnas);
+
     }
 
     private Integer calcularCantidadFilas(List<PlayaEstacionamiento> filasTabla) {
         Integer cantidadFilas = filasTabla.size();
         for (PlayaEstacionamiento sim : filasTabla) {
-            cantidadFilas += (sim.getEventosFinEstacionamiento().size()) + 1;
+            cantidadFilas += (sim.getEventosFinEstacionamiento().size()) + 4 + sim.getAutosTotalesList().size();
         }
         return cantidadFilas;
     }

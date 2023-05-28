@@ -16,7 +16,6 @@ import enums.Evento;
 import enums.TipoCoche;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -80,18 +79,19 @@ public class VectorPlayaEstacionamiento {
 
                 //LLEGADA AUTO
                 if (simulacion.getEventoName().contains("LLEGADA_AUTO_")) {
+                    nroAuto = i;
                     procesarEventoLlegadaAuto(simulacion, simulacionAnterior, rndTipoCoche, rndMinutosEstacionamiento,
                             probabilidadesTipoCocheYPrecio, probabilidadesMinutosEstacionamiento, nroAuto);
                 }
 
                 //FIN ESTACIONAMIENTO
                 if (simulacion.getEventoName().contains("FIN_EST")) {
-                    procesarEventoFinEstacionamiento(simulacion, simulacionAnterior);
+                    procesarEventoFinEstacionamiento(simulacion, simulacionAnterior, tpoCobro);
                 }
 
                 //FIN COBRO
                 if (simulacion.getEventoName().contains("FIN_COBRO")) {
-                    procesarEventoFinCobro(simulacion, simulacionAnterior);
+                    procesarEventoFinCobro(simulacion, simulacionAnterior, tpoCobro);
                 }
             }
 
@@ -145,6 +145,12 @@ public class VectorPlayaEstacionamiento {
         Map<Double, Auto> autosEsperandoCobro = new HashMap<>();
         simulacion.setAutosEsperandoCobro(autosEsperandoCobro);
 
+        Map<Integer, String> autosTotales = new HashMap<>();
+        simulacion.setAutosTotales(autosTotales);
+
+        ArrayList<Auto> autosTotalesList = new ArrayList<>();
+        simulacion.setAutosTotalesList(autosTotalesList);
+
         simulacion.setVariablesEstadisticas(VariablesEstadisticas.builder().build());
         simulaciones.add(simulacion);
 
@@ -152,6 +158,11 @@ public class VectorPlayaEstacionamiento {
 
     private void procesarEventoLlegadaAuto(PlayaEstacionamiento simulacion, PlayaEstacionamiento simulacionAnterior, Random rndTipoCoche, Random rndMinutosEstacionamiento,
             TablaProbabilidad probabilidadesTipoCocheYPrecio, TablaProbabilidad probabilidadesMinutosEstacionamiento, int nroAuto) {
+
+        //  Map<Integer, String> autosTotales = copyAndSetNuevoMapParaAutosTotalesNuevosObjetos(simulacionAnterior.getAutosTotales());
+        //  simulacion.setAutosTotales(autosTotales);
+        ArrayList<Auto> autosTotalesList = copyAndSetNuevoArrayListParaAutosTotalesNuevosObjetos(simulacionAnterior.getAutosTotalesList());
+        simulacion.setAutosTotalesList(autosTotalesList);
 
         simulacion.setRndTipoCoche(Math.floor(rndTipoCoche.nextDouble() * 10000) / 10000);
         simulacion.setTipoCoche(calcularProbabilidad(simulacion.getRndTipoCoche(), probabilidadesTipoCocheYPrecio).getTipoCoche());
@@ -188,6 +199,12 @@ public class VectorPlayaEstacionamiento {
                     .cantidadAutosNoIngresadosAC(simulacionAnterior.getVariablesEstadisticas().getCantidadAutosNoIngresados() + 1)
                     .build());
             simulacion.setCantidadOcupados(simulacionAnterior.getCantidadOcupados());
+
+            // autosTotales.put(nroAuto, "NO-INGRESADO")
+            autosTotalesList.add(Auto.builder().id(nroAuto).estadoAuto(EstadoAuto.NO_INGRESADO).build());
+            Collections.sort(autosTotalesList, Auto.AutoComparator);
+            simulacion.setAutosTotalesList(autosTotalesList);
+
             simulaciones.add(simulacion);
             return;
             //continue;
@@ -216,8 +233,14 @@ public class VectorPlayaEstacionamiento {
         Auto auto = Auto.builder().estadoAuto(EstadoAuto.ESTACIONADO)
                 .precioXMinutos(simulacion.getPrecio() * (simulacion.getMinutos() / 60))
                 .horaEntradaCobro(simulacion.getReloj())
-                .id(nroAuto + 1)
+                .id(nroAuto)
                 .nroFinEstacionamiento(eventoFinEstacionamientoLibre != null ? eventoFinEstacionamientoLibre.getNro() : 0).build();
+
+        // autosTotales.put(nroAuto, "ESTACIONADO");
+        // simulacion.setAutosTotales(autosTotales);
+        autosTotalesList.add(auto);
+        Collections.sort(autosTotalesList, Auto.AutoComparator);
+        simulacion.setAutosTotalesList(autosTotalesList);
 
         Map<Integer, Auto> autosMapeadosNuevaSim = new HashMap<>();
         autosMapeadosNuevaSim.putAll(simulacionAnterior.getAutosMapeados());
@@ -229,13 +252,18 @@ public class VectorPlayaEstacionamiento {
         simulaciones.add(simulacion);
     }
 
-    private void procesarEventoFinEstacionamiento(PlayaEstacionamiento simulacion, PlayaEstacionamiento simulacionAnterior) {
+    private void procesarEventoFinEstacionamiento(PlayaEstacionamiento simulacion, PlayaEstacionamiento simulacionAnterior, double tpoCobro) {
+
+        //Map<Integer, String> autosTotales = copyAndSetNuevoMapParaAutosTotalesNuevosObjetos(simulacionAnterior.getAutosTotales());
+        //simulacion.setAutosTotales(autosTotales);
+        ArrayList<Auto> autosTotalesList = copyAndSetNuevoArrayListParaAutosTotalesNuevosObjetos(simulacionAnterior.getAutosTotalesList());
+        simulacion.setAutosTotalesList(autosTotalesList);
+
         Map<Double, Auto> autosEsperandoCobro = new HashMap<>();
         simulacion.setAutosEsperandoCobro(simulacionAnterior.getAutosEsperandoCobro());
 
         autosEsperandoCobro.putAll(simulacionAnterior.getAutosEsperandoCobro());
-        
-        
+
         Map<Integer, Auto> autosMapeadosNuevaSim = new HashMap<>();
         autosMapeadosNuevaSim.putAll(simulacionAnterior.getAutosMapeados());
         simulacion.setAutosMapeados(autosMapeadosNuevaSim);
@@ -256,7 +284,7 @@ public class VectorPlayaEstacionamiento {
         int nroEstacionamiento = 0;
         double horaEntredaEstacionamiento = 0;
         double precioXMinutos = 0;
-        int nroAuto = 0;
+        Integer nroAuto = 0;
         //Buscamos todos los eventos de fin de estacionamiento para liberar el que sea igual al evento
         for (EventoFinEstacionamiento eventoFinEstacionamiento : listaEventosFinEstacionamiento) {
             if (simulacion.getEventoName().equals(Evento.FIN_ESTACIONAMIENTO_.name() + eventoFinEstacionamiento.getNro())) {
@@ -312,6 +340,11 @@ public class VectorPlayaEstacionamiento {
                         .precioXMinutos(precioXMinutos)
                         .nroFinEstacionamiento(nroEstacionamiento)
                         .build();
+                // autosTotales.put(nroAuto, "ESPERANDO_COBRO");
+
+                int nroAutoEsperandoCobro = nroAuto;
+                autosTotalesList.removeIf(p -> p.getId() == (nroAutoEsperandoCobro));
+                autosTotalesList.add(autoModificado);
 
             } else {
                 simulacion.setCajaCobro(CajaCobro.builder().estadoCaja(Estado.OCUPADO).build());
@@ -323,32 +356,47 @@ public class VectorPlayaEstacionamiento {
                         .nroFinEstacionamiento(nroEstacionamiento)
                         .build();
                 eventoFinCobro = EventoFinCobro.builder()
-                        .tiempoCobro(2)
-                        .finAtCobro(simulacion.getReloj() + 2)
+                        .tiempoCobro(tpoCobro)
+                        .finAtCobro(simulacion.getReloj() + tpoCobro)
                         .nroAuto(nroAuto)
                         .nroEstacionamiento(nroEstacionamiento)
                         .auto(autoMap)
                         .build();
                 simulacion.setAutoSiendoCobrado(autoModificado);
+                //autosTotales.put(nroAuto, "SIENDO_COBRADO")
+
+                int nroAutoSiendoCobrado = nroAuto;
+                autosTotalesList.removeIf(p -> p.getId() == (nroAutoSiendoCobrado));
+                autosTotalesList.add(autoModificado);
             }
 
         } else {
             simulacion.setCajaCobro(CajaCobro.builder().estadoCaja(Estado.OCUPADO).cola(0).build());
             autoModificado = Auto.builder()
+                    .id(nroAuto)
                     .estadoAuto(EstadoAuto.SIENDO_COBRADO)
                     .horaEntradaCobro(horaEntredaEstacionamiento)
                     .precioXMinutos(precioXMinutos)
                     .nroFinEstacionamiento(nroEstacionamiento)
                     .build();
             eventoFinCobro = EventoFinCobro.builder()
-                    .tiempoCobro(2)
-                    .finAtCobro(simulacion.getReloj() + 2)
+                    .tiempoCobro(tpoCobro)
+                    .finAtCobro(simulacion.getReloj() + tpoCobro)
                     .nroAuto(nroAuto)
                     .nroEstacionamiento(nroEstacionamiento)
                     .auto(autoMap)
                     .build();
             simulacion.setAutoSiendoCobrado(autoModificado);
+            //autosTotales.put(nroAuto, "SIENDO_COBRADO");
+
+            int nroAutoSiendoCobrado = nroAuto;
+            autosTotalesList.removeIf(p -> p.getId() == (nroAutoSiendoCobrado));
+            autosTotalesList.add(autoModificado);
         }
+
+        // simulacion.setAutosTotales(autosTotales);
+        Collections.sort(autosTotalesList, Auto.AutoComparator);
+        simulacion.setAutosTotalesList(autosTotalesList);
 
         autosEsperandoCobro.put(autoModificado.getHoraEntradaCobro(), autoModificado);
 
@@ -363,15 +411,20 @@ public class VectorPlayaEstacionamiento {
         simulaciones.add(simulacion);
     }
 
-    private void procesarEventoFinCobro(PlayaEstacionamiento simulacion, PlayaEstacionamiento simulacionAnterior) {
-      
+    private void procesarEventoFinCobro(PlayaEstacionamiento simulacion, PlayaEstacionamiento simulacionAnterior, double tpoCobro) {
+
+        //Map<Integer, String> autosTotales = copyAndSetNuevoMapParaAutosTotalesNuevosObjetos(simulacionAnterior.getAutosTotales());
+        //simulacion.setAutosTotales(autosTotales);
+        ArrayList<Auto> autosTotalesList = copyAndSetNuevoArrayListParaAutosTotalesNuevosObjetos(simulacionAnterior.getAutosTotalesList());
+        simulacion.setAutosTotalesList(autosTotalesList);
+
         Map<Double, Auto> autosEsperandoCobro = new HashMap<>();
         simulacion.setAutosEsperandoCobro(simulacionAnterior.getAutosEsperandoCobro());
 
         autosEsperandoCobro.putAll(simulacionAnterior.getAutosEsperandoCobro());
-        
+
         simulacion.setEventoFinCobro(simulacionAnterior.getEventoFinCobro());
-        
+
         simulacion.setEventoLLegadaAuto(EventoLLegadaAuto.builder()
                 .proximoAuto(simulacionAnterior.getEventoLLegadaAuto().getProximoAuto())
                 .build());
@@ -386,7 +439,7 @@ public class VectorPlayaEstacionamiento {
             if (simulacionAnterior.getCajaCobro().getCola() > 0) {
                 simulacion.setCajaCobro(CajaCobro.builder().estadoCaja(simulacionAnterior.getCajaCobro().getEstadoCaja())
                         .cola(simulacionAnterior.getCajaCobro().getCola() - 1).build());
-               
+
                 Auto autoEsperandoCobro = null;
                 for (Map.Entry<Double, Auto> entry : simulacion.getAutosEsperandoCobro().entrySet()) {
                     if (entry.getValue().getEstadoAuto().equals(EstadoAuto.ESPERANDO_COBRO)) {
@@ -398,25 +451,42 @@ public class VectorPlayaEstacionamiento {
                 }
 
                 simulacion.setEventoFinCobro(EventoFinCobro.builder()
-                        .tiempoCobro(2)
-                        .finAtCobro(simulacion.getReloj() + 2)
+                        .tiempoCobro(tpoCobro)
+                        .finAtCobro(simulacion.getReloj() + tpoCobro)
                         .nroAuto(autoEsperandoCobro.getId())
                         .nroEstacionamiento(autoEsperandoCobro.getNroFinEstacionamiento())
                         .auto(autoEsperandoCobro)
                         .build());
+                //autosTotales.put(autoEsperandoCobro.getId(), "SIENDO_COBRADO");
+
+                int nroAutoSiendoCobrado = autoEsperandoCobro.getId();
+                autosTotalesList.removeIf(p -> p.getId() == (nroAutoSiendoCobrado));
+                autosTotalesList.add(autoEsperandoCobro);
+
             } else {
                 simulacion.setCajaCobro(CajaCobro.builder().estadoCaja(Estado.LIBRE).build());
                 simulacion.setEventoFinCobro(EventoFinCobro.builder().build());
+                //autosTotales.put(simulacionAnterior.getEventoFinCobro().getAuto().getId(), "ELIMINADO");
+
+                int nroAutELiminado = simulacionAnterior.getEventoFinCobro().getAuto().getId();
+                autosTotalesList.removeIf(p -> p.getId() == (nroAutELiminado));
+                //autosTotalesList.add(Auto.builder().id(nroAutELiminado).estadoAuto(EstadoAuto.ELIMINADO).build());
 
             }
 
         } else {
             simulacion.setCajaCobro(CajaCobro.builder().estadoCaja(Estado.LIBRE).cola(0).build());
             simulacion.setEventoFinCobro(EventoFinCobro.builder().build());
-
+            //autosTotales.put(simulacion.getEventoFinCobro().getAuto().getId(), "ELIMINADO");
+            int nroAutELiminado = simulacionAnterior.getEventoFinCobro().getAuto().getId();
+            autosTotalesList.removeIf(p -> p.getId() == (nroAutELiminado));
+            //autosTotalesList.add(Auto.builder().id(nroAutELiminado).estadoAuto(EstadoAuto.ELIMINADO).build());
         }
+        Collections.sort(autosTotalesList, Auto.AutoComparator);
+        simulacion.setAutosTotalesList(autosTotalesList);
 
-        
+        simulacion.setCantidadOcupados(simulacionAnterior.getCantidadOcupados());
+
         simulacion.setSectores(simulacionAnterior.getSectores());
         simulacion.setVariablesEstadisticas(VariablesEstadisticas.builder()
                 .recaudacion(simulacionAnterior.getEventoFinCobro().getAuto().getPrecioXMinutos())
@@ -424,7 +494,37 @@ public class VectorPlayaEstacionamiento {
 
         autosEsperandoCobro.remove(simulacionAnterior.getEventoFinCobro().getAuto().getHoraEntradaCobro());
         simulacion.setAutosEsperandoCobro(autosEsperandoCobro);
+
         simulaciones.add(simulacion);
+    }
+
+    public Map<Integer, String> copyAndSetNuevoMapParaAutosTotalesNuevosObjetos(Map<Integer, String> autosTotales) {
+        Map<Integer, String> autosTotalesAux = new HashMap<>(autosTotales.size());
+
+        for (Map.Entry<Integer, String> entry : autosTotales.entrySet()) {
+
+            String estadoAnteriorAuto = entry.getValue();
+            Integer nroAutoAnterior = entry.getKey();
+            autosTotalesAux.put(nroAutoAnterior, estadoAnteriorAuto);
+        }
+
+        return autosTotalesAux;
+    }
+
+    public ArrayList<Auto> copyAndSetNuevoArrayListParaAutosTotalesNuevosObjetos(ArrayList<Auto> autosTotales) {
+        ArrayList<Auto> autosTotalesAux = new ArrayList<>();
+
+        for (Auto entry : autosTotales) {
+
+            Auto autoNuevoDelAnterior = Auto.builder().estadoAuto(entry.getEstadoAuto())
+                    .id(entry.getId()).horaEntradaCobro(entry.getHoraEntradaCobro())
+                    .nroFinEstacionamiento(entry.getNroFinEstacionamiento())
+                    .precioXMinutos(entry.getPrecioXMinutos())
+                    .build();
+            autosTotalesAux.add(autoNuevoDelAnterior);
+        }
+
+        return autosTotalesAux;
     }
 
     public Sector haySectorLibre(List<Sector> sectores) {
