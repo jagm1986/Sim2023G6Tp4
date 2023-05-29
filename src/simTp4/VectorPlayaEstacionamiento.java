@@ -434,6 +434,7 @@ public class VectorPlayaEstacionamiento {
                     .auto(autoEsperandoCobro)
                     .build());
             autosTotales.put(autoEsperandoCobro.getId(), EstadoAuto.SIENDO_COBRADO);
+            autosEsperandoCobro.remove(autoEsperandoCobro.getHoraEntradaCobro());
 
         } else {
             simulacion.setCajaCobro(CajaCobro.builder().estadoCaja(Estado.LIBRE).build());
