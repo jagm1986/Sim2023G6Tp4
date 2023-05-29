@@ -602,9 +602,10 @@ public class Principal extends javax.swing.JFrame {
                 TablaIntervalos filas = new TablaIntervalos(listaDesdeHasta);
                 tabla.setModel(filas);
 
-                recaudacionTotal.setText(String.valueOf(filas.getRecaudacionTotal()));
-                cantidadAutosNoIngresados.setText(String.valueOf(filas.getCantidadAutosNoIngresadosTotal()));
-                porcUtilizacion.setText(String.valueOf(Math.floor(filas.getProcentajeUtilizacionPlaya() * 100) / 100) + " %");
+                recaudacionTotal.setText(String.valueOf(manejador.getRecaudacionTotal()));
+                cantidadAutosNoIngresados.setText(String.valueOf(manejador.getCantidadAutosNoIngresadosTotal()));
+                porcUtilizacion.setText(String.valueOf(Math.floor((manejador.getPorcentajeUtilizacionTotal() * 100
+                        / manejador.getSimulaciones().get(manejador.getSimulaciones().size() - 1).getReloj()) * 100 / 100)) + " %");
 
                 setColumnSize(tabla);
 
@@ -640,9 +641,10 @@ public class Principal extends javax.swing.JFrame {
         TablaIntervalos filas = new TablaIntervalos(listaDesdeHasta);
         tabla.setModel(filas);
 
-        recaudacionTotal.setText(String.valueOf(filas.getRecaudacionTotal()));
-        cantidadAutosNoIngresados.setText(String.valueOf(filas.getCantidadAutosNoIngresadosTotal()));
-        porcUtilizacion.setText(String.valueOf(Math.floor(filas.getProcentajeUtilizacionPlaya() * 100) / 100) + " %");
+        recaudacionTotal.setText(String.valueOf(manejador.getRecaudacionTotal()));
+        cantidadAutosNoIngresados.setText(String.valueOf(manejador.getCantidadAutosNoIngresadosTotal()));
+        porcUtilizacion.setText(String.valueOf(Math.floor((manejador.getPorcentajeUtilizacionTotal() * 100
+                / manejador.getSimulaciones().get(manejador.getSimulaciones().size() - 1).getReloj()) * 100 / 100)) + " %");
 
         setColumnSize(tabla);
     }//GEN-LAST:event_btnMostrarIntervalosActionPerformed

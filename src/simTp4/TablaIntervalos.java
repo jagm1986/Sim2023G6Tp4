@@ -3,8 +3,10 @@ package simTp4;
 import Eventos.EventoFinEstacionamiento;
 import ObjetosPermanentes.Sector;
 import ObjetosTemporales.Auto;
+import enums.EstadoAuto;
 import java.text.DecimalFormat;
 import java.util.List;
+import java.util.Map;
 import javax.swing.table.DefaultTableModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -90,22 +92,23 @@ public class TablaIntervalos extends DefaultTableModel {
             matrizTabla[i][24] = simulacion.getCantidadOcupados();
 
             i = iAnteriorAlLoop;
-            /* for (Map.Entry<Integer, String> entry : simulacion.getAutosTotales().entrySet()) {
+             for (Map.Entry<Integer, EstadoAuto> entry : simulacion.getAutosTotales().entrySet()) {
 
                 i++;
-                matrizTabla[i][25] = entry.getKey() + ": " + entry.getValue();
+                matrizTabla[i][25] = "PATENTE: " + entry.getKey() + ": " + entry.getValue();
                 
             }
-             */
+             
 
-            for (Auto autoAMostrar : simulacion.getAutosTotalesList()) {
+           /* for (Auto autoAMostrar : simulacion.getAutosTotalesList()) {
                 i++;
                 matrizTabla[i][25] = "PATENTE: " + autoAMostrar.getId() + ": " + autoAMostrar.getEstadoAuto();
-            }
+            }*/
 
             i = iAnteriorAlLoop + 1;
 
-            int j = simulacion.getAutosTotalesList().size() > 15 ? simulacion.getAutosTotalesList().size() : 15;
+           // int j = simulacion.getAutosTotalesList().size() > 15 ? simulacion.getAutosTotalesList().size() : 15;
+           int j = simulacion.getAutosTotales().size() > 15 ? simulacion.getAutosTotales().size() : 15;
             i = i + j;
         }
 
@@ -127,7 +130,8 @@ public class TablaIntervalos extends DefaultTableModel {
     private Integer calcularCantidadFilas(List<PlayaEstacionamiento> filasTabla) {
         Integer cantidadFilas = filasTabla.size();
         for (PlayaEstacionamiento sim : filasTabla) {
-            cantidadFilas += (sim.getEventosFinEstacionamiento().size()) + 4 + sim.getAutosTotalesList().size();
+           // cantidadFilas += (sim.getEventosFinEstacionamiento().size()) + 4 + sim.getAutosTotalesList().size();
+           cantidadFilas += (sim.getEventosFinEstacionamiento().size()) + 4 + sim.getAutosTotales().size();
         }
         return cantidadFilas;
     }

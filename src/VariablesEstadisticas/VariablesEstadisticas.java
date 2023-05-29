@@ -15,6 +15,7 @@ public class VariablesEstadisticas {
 
     private int id;
     private double recaudacion;
+    private double recaudacionAC;
     private double cantidadAutosNoIngresados;
     private double cantidadAutosNoIngresadosAC;
     private double porcentajeUtilizacionPlaya;
