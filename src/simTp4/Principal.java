@@ -288,9 +288,9 @@ public class Principal extends javax.swing.JFrame {
             }
         });
 
-        txtDesde.setText("1");
+        txtDesde.setText("29998");
 
-        txtHasta.setText("50");
+        txtHasta.setText("30000");
 
         jLabel16.setFont(new java.awt.Font("Cambria Math", 1, 14)); // NOI18N
         jLabel16.setText("Desde");
