@@ -72,16 +72,14 @@ public class VectorPlayaEstacionamiento {
         if (N > 1) {
 
             for (int i = 1; i < cantidadSimulaciones + 1; i++) {
-                if (i == 65000) {
-                    System.out.print(i);
-                }
+              
                 simulacion = new PlayaEstacionamiento();
 
                 simulacionAnterior = simulaciones.get(i - 1);
 
                 //simulacion = new PlayaEstacionamiento();
                 simulacion.setNroSimulacion(i);
-                simulacion.setEventoName(calcularEventoProximo(simulacion, simulacionAnterior));
+                simulacion.setEventoName(calcularEventoProximo(simulacion, simulacionAnterior, i));
 
                 //LLEGADA AUTO
                 if (simulacion.getEventoName().contains("LLEGADA_AUTO_")) {
@@ -250,7 +248,8 @@ public class VectorPlayaEstacionamiento {
                 .id(nroAuto)
                 .nroFinEstacionamiento(eventoFinEstacionamientoLibre != null ? eventoFinEstacionamientoLibre.getNro() : 0).build();
 
-        autosTotales.put(nroAuto, EstadoAuto.ESTACIONADO);
+        autosTotales.put(nroAuto, EstadoAuto.ESTACIONADO
+                .setGetValue((eventoFinEstacionamientoLibre != null ? String.valueOf(eventoFinEstacionamientoLibre.getNro()) : "0")));
         simulacion.setAutosTotales(autosTotales);
 
         autosMapeadosNuevaSim.put((eventoFinEstacionamientoLibre != null ? eventoFinEstacionamientoLibre.getNro() : 0), auto);
@@ -592,14 +591,14 @@ public class VectorPlayaEstacionamiento {
         return new Probabilidad();
     }
 
-    private String calcularEventoProximo(PlayaEstacionamiento simulacion, PlayaEstacionamiento simulacionAnterior) {
+    private String calcularEventoProximo(PlayaEstacionamiento simulacion, PlayaEstacionamiento simulacionAnterior, int i) {
         double min = 0d;
 
         if (simulacionAnterior.getEventoFinCobro() != null && simulacionAnterior.getEventoFinCobro().getFinAtCobro() != 0) {
 
             if (simulacionAnterior.getEventoLLegadaAuto().getProximoAuto() < simulacionAnterior.getEventoFinCobro().getFinAtCobro()) {
                 min = simulacionAnterior.getEventoLLegadaAuto().getProximoAuto();
-                MinimoProxEvento eventoFinal = calcularMinimoDeEventosFinEstacionamiento(min, simulacionAnterior, Evento.LLEGADA_AUTO_.toString());
+                MinimoProxEvento eventoFinal = calcularMinimoDeEventosFinEstacionamiento(min, simulacionAnterior, Evento.LLEGADA_AUTO_.toString() + i);
                 simulacion.setReloj(eventoFinal.getMin());
 
                 return eventoFinal.getEvento();
@@ -611,7 +610,7 @@ public class VectorPlayaEstacionamiento {
             }
         } else {
             min = simulacionAnterior.getEventoLLegadaAuto().getProximoAuto();
-            MinimoProxEvento eventoFinal = calcularMinimoDeEventosFinEstacionamiento(min, simulacionAnterior, Evento.LLEGADA_AUTO_.toString());
+            MinimoProxEvento eventoFinal = calcularMinimoDeEventosFinEstacionamiento(min, simulacionAnterior, Evento.LLEGADA_AUTO_.toString() + i);
             simulacion.setReloj(eventoFinal.getMin());
             return eventoFinal.getEvento();
         }

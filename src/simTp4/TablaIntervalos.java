@@ -81,7 +81,7 @@ public class TablaIntervalos extends DefaultTableModel {
             for (Map.Entry<Integer, EstadoAuto> entry : simulacion.getAutosTotales().entrySet()) {
 
                 i++;
-                matrizTabla[i][25] = "PATENTE: " + entry.getKey() + ": " + entry.getValue();
+                matrizTabla[i][25] = "PATENTE: " + entry.getKey() + ": " + entry.getValue() ;
 
             }
 
