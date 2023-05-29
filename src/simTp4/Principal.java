@@ -10,7 +10,7 @@ import javax.swing.JOptionPane;
 
 public class Principal extends javax.swing.JFrame {
 
-    private static final DecimalFormat df = new DecimalFormat("0.000");
+    private static final DecimalFormat df = new DecimalFormat("0.00");
 
     Locale locale = new Locale("en", "US");
     NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(locale);
@@ -569,13 +569,16 @@ public class Principal extends javax.swing.JFrame {
 
         if (Double.parseDouble(prob1HS.getText())
                 + Double.parseDouble(prob2HS.getText())
-                + Double.parseDouble(prob4HS.getText())
+                + (1 - (Double.parseDouble(prob1HS.getText()) + Double.parseDouble(prob2HS.getText()) + Double.parseDouble(prob3HS.getText())))
                 + Double.parseDouble(prob3HS.getText()) != 1) {
 
             JOptionPane.showMessageDialog(new JFrame(), "La suma de las probabilidades del tiempo de estacionamiento no puede ser distinto de uno (1)",
                     "Parámetros incorrectos", JOptionPane.WARNING_MESSAGE);
             fallo = true;
 
+        } else {
+            prob4HS.setText(df.format(1 - (Double.parseDouble(prob1HS.getText()) 
+                    + Double.parseDouble(prob2HS.getText()) + Double.parseDouble(prob3HS.getText()))));
         }
 
         if (fallo == false) {
