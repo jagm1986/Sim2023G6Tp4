@@ -514,9 +514,13 @@ public class VectorPlayaEstacionamiento {
     }
 
     public void resetear() {
-        N = 0;
-        simulaciones = new ArrayList<>();
-        tipoCoche = null;
+        this.N = 0;
+        this.simulaciones = new ArrayList<>();
+        this.tipoCoche = null;
+        this.minutosEstacionamiento = null;
+        this.recaudacionTotal = 0d;
+        this.cantidadAutosNoIngresadosTotal = 0;
+        this.porcentajeUtilizacionTotal = 0d;
 
     }
 

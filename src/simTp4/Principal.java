@@ -1,11 +1,19 @@
 package simTp4;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.IntStream;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 public class Principal extends javax.swing.JFrame {
+
+    private static final DecimalFormat df = new DecimalFormat("0.000");
+
+    Locale locale = new Locale("en", "US");
+    NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(locale);
 
     private final VectorPlayaEstacionamiento manejador;
 
@@ -27,6 +35,7 @@ public class Principal extends javax.swing.JFrame {
         probUtilitario.setText("");
         txtDesde.setText("");
         txtHasta.setText("");
+        recaudacionTotal.setText("");
 
     }
 
@@ -580,6 +589,12 @@ public class Principal extends javax.swing.JFrame {
                 fallo = true;
             }
 
+            if (Integer.parseInt(txtHasta.getText()) > Integer.parseInt(txtN.getText())) {
+                JOptionPane.showMessageDialog(new JFrame(), "Hasta no deberia ser mayor a N", "Parámetros incorrectos", JOptionPane.WARNING_MESSAGE);
+                txtHasta.requestFocus();
+                fallo = true;
+            }
+
             if (fallo == false) {
 
                 int cantidadSimulaciones = Integer.parseInt(txtN.getText());
@@ -604,7 +619,8 @@ public class Principal extends javax.swing.JFrame {
                 TablaIntervalos filas = new TablaIntervalos(listaDesdeHasta);
                 tabla.setModel(filas);
 
-                recaudacionTotal.setText(String.valueOf(manejador.getRecaudacionTotal()));
+                recaudacionTotal.setText(String.valueOf(NumberFormat.getCurrencyInstance(new Locale("en", "US"))
+        .format(manejador.getRecaudacionTotal())));
                 cantidadAutosNoIngresados.setText(String.valueOf(manejador.getCantidadAutosNoIngresadosTotal()));
                 porcUtilizacion.setText(String.valueOf(Math.floor((manejador.getPorcentajeUtilizacionTotal() * 100
                         / manejador.getSimulaciones().get(manejador.getSimulaciones().size() - 1).getReloj()) * 100 / 100)) + " %");
@@ -633,6 +649,13 @@ public class Principal extends javax.swing.JFrame {
     }//GEN-LAST:event_tpoCobroActionPerformed
 
     private void btnMostrarIntervalosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMostrarIntervalosActionPerformed
+        if (Integer.parseInt(txtHasta.getText()) > Integer.parseInt(txtN.getText())
+                || Integer.parseInt(txtDesde.getText()) > Integer.parseInt(txtN.getText())) {
+            JOptionPane.showMessageDialog(new JFrame(), "Desde o Hasta no deberia ser mayor a N", "Parámetros incorrectos", JOptionPane.WARNING_MESSAGE);
+            txtHasta.requestFocus();
+            return;
+        }
+
         //Carga de grilla
         Integer desde = Integer.parseInt(txtDesde.getText());
         int hasta = Integer.parseInt(txtHasta.getText());
@@ -643,7 +666,7 @@ public class Principal extends javax.swing.JFrame {
         TablaIntervalos filas = new TablaIntervalos(listaDesdeHasta);
         tabla.setModel(filas);
 
-        recaudacionTotal.setText(String.valueOf(manejador.getRecaudacionTotal()));
+        recaudacionTotal.setText(df.format(String.valueOf(manejador.getRecaudacionTotal())));
         cantidadAutosNoIngresados.setText(String.valueOf(manejador.getCantidadAutosNoIngresadosTotal()));
         porcUtilizacion.setText(String.valueOf(Math.floor((manejador.getPorcentajeUtilizacionTotal() * 100
                 / manejador.getSimulaciones().get(manejador.getSimulaciones().size() - 1).getReloj()) * 100 / 100)) + " %");
