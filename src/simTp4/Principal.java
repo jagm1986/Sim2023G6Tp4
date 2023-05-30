@@ -566,10 +566,13 @@ public class Principal extends javax.swing.JFrame {
             fallo = true;
 
         }
+        
+        double prob4 = (1 - (Double.parseDouble(prob1HS.getText()) + Double.parseDouble(prob2HS.getText()) + Double.parseDouble(prob3HS.getText()))) < 0 ? 0 :
+                (1 - (Double.parseDouble(prob1HS.getText()) + Double.parseDouble(prob2HS.getText()) + Double.parseDouble(prob3HS.getText())));
 
         if (Double.parseDouble(prob1HS.getText())
                 + Double.parseDouble(prob2HS.getText())
-                + (1 - (Double.parseDouble(prob1HS.getText()) + Double.parseDouble(prob2HS.getText()) + Double.parseDouble(prob3HS.getText())))
+                + prob4
                 + Double.parseDouble(prob3HS.getText()) != 1) {
 
             JOptionPane.showMessageDialog(new JFrame(), "La suma de las probabilidades del tiempo de estacionamiento no puede ser distinto de uno (1)",
