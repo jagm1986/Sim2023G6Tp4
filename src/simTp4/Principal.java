@@ -617,7 +617,7 @@ public class Principal extends javax.swing.JFrame {
 
                 //Carga de grilla
                 Integer desde = Integer.parseInt(txtDesde.getText());
-                int hasta = Integer.parseInt(txtHasta.getText());
+                int hasta = Integer.parseInt(txtHasta.getText()) +1;
                 List<PlayaEstacionamiento> listaDesdeHasta = IntStream.range(desde, hasta)
                         .mapToObj(i -> manejador.getSimulaciones().get(i))
                         .toList();
@@ -664,7 +664,7 @@ public class Principal extends javax.swing.JFrame {
 
         //Carga de grilla
         Integer desde = Integer.parseInt(txtDesde.getText());
-        int hasta = Integer.parseInt(txtHasta.getText());
+        int hasta = Integer.parseInt(txtHasta.getText())+1;
         List<PlayaEstacionamiento> listaDesdeHasta = IntStream.range(desde, hasta)
                 .mapToObj(i -> manejador.getSimulaciones().get(i))
                 .toList();
