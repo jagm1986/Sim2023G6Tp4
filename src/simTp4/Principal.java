@@ -662,22 +662,24 @@ public class Principal extends javax.swing.JFrame {
             return;
         }
 
-        //Carga de grilla
-        Integer desde = Integer.parseInt(txtDesde.getText());
-        int hasta = Integer.parseInt(txtHasta.getText())+1;
-        List<PlayaEstacionamiento> listaDesdeHasta = IntStream.range(desde, hasta)
-                .mapToObj(i -> manejador.getSimulaciones().get(i))
-                .toList();
+         //Carga de grilla
+                Integer desde = Integer.parseInt(txtDesde.getText());
+                int hasta = Integer.parseInt(txtHasta.getText()) +1;
+                List<PlayaEstacionamiento> listaDesdeHasta = IntStream.range(desde, hasta)
+                        .mapToObj(i -> manejador.getSimulaciones().get(i))
+                        .toList();
 
-        TablaIntervalos filas = new TablaIntervalos(listaDesdeHasta);
-        tabla.setModel(filas);
+                TablaIntervalos filas = new TablaIntervalos(listaDesdeHasta);
+                tabla.setModel(filas);
 
-        recaudacionTotal.setText(df.format(String.valueOf(manejador.getRecaudacionTotal())));
-        cantidadAutosNoIngresados.setText(String.valueOf(manejador.getCantidadAutosNoIngresadosTotal()));
-        porcUtilizacion.setText(String.valueOf(Math.floor((manejador.getPorcentajeUtilizacionTotal() * 100
-                / manejador.getSimulaciones().get(manejador.getSimulaciones().size() - 1).getReloj()) * 100 / 100)) + " %");
+                recaudacionTotal.setText(String.valueOf(NumberFormat.getCurrencyInstance(new Locale("en", "US"))
+        .format(manejador.getRecaudacionTotal())));
+                cantidadAutosNoIngresados.setText(String.valueOf(manejador.getCantidadAutosNoIngresadosTotal()));
+                porcUtilizacion.setText(String.valueOf(Math.floor((manejador.getPorcentajeUtilizacionTotal() * 100
+                        / manejador.getSimulaciones().get(manejador.getSimulaciones().size() - 1).getReloj()) * 100 / 100)) + " %");
 
-        setColumnSize(tabla);
+                setColumnSize(tabla);
+
     }//GEN-LAST:event_btnMostrarIntervalosActionPerformed
 
     public static void main(String args[]) {

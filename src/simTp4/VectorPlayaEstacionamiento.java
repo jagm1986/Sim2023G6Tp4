@@ -196,7 +196,11 @@ public class VectorPlayaEstacionamiento {
         simulacion.setEventoFinCobro(simulacionAnterior.getEventoFinCobro());
         simulacion.setCajaCobro(simulacionAnterior.getCajaCobro());
 
-        simulacion.setVariablesEstadisticas(simulacionAnterior.getVariablesEstadisticas());
+        simulacion.setVariablesEstadisticas(VariablesEstadisticas.builder()
+                .cantidadAutosNoIngresados(simulacionAnterior.getVariablesEstadisticas().getCantidadAutosNoIngresados())
+                .cantidadAutosNoIngresadosAC(simulacionAnterior.getVariablesEstadisticas().getCantidadAutosNoIngresadosAC())
+                .recaudacion(simulacionAnterior.getVariablesEstadisticas().getRecaudacion())
+                .build());
 
         simulacion.getVariablesEstadisticas().setPorcentajeUtilizacionPlaya(((Integer.valueOf(simulacionAnterior.getCantidadOcupados()).doubleValue()
                 / 10) * 10000 / 10000) * (simulacion.getReloj() - simulacionAnterior.getReloj()));
