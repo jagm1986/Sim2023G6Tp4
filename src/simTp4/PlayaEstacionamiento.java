@@ -45,7 +45,7 @@ public class PlayaEstacionamiento {
     private Map<Integer, Auto> autosMapeados;
     private Map<Double, Auto> autosEsperandoCobro;
     private Auto autoSiendoCobrado;
-    private Map<Integer, EstadoAuto> autosTotales;
+    private Map<Integer, Auto> autosTotales;
     private ArrayList<Auto> autosTotalesList;
 
 }

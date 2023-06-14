@@ -41,31 +41,52 @@ public class Principal extends javax.swing.JFrame {
 
     private void setColumnSize(javax.swing.JTable tabla) {
         tabla.getColumn("Nro").setMinWidth(20);
-        tabla.getColumn("Reloj").setMinWidth(36);
+        tabla.getColumn("Reloj").setMinWidth(100);
         tabla.getColumn("Evento").setMinWidth(200);
-        tabla.getColumn("RndTC").setMinWidth(36);
+        tabla.getColumn("Rnd").setMinWidth(36);
         tabla.getColumn("Tipo_Coche").setMinWidth(100);
         tabla.getColumn("Precio").setMinWidth(36);
-        tabla.getColumn("Rnd_Min").setMinWidth(36);
+        tabla.getColumn("Rnd").setMinWidth(36);
         tabla.getColumn("Minutos").setMinWidth(36);
-        tabla.getColumn("Rnd_Llegada_Auto").setMinWidth(150);
-        tabla.getColumn("TpoELLg").setMinWidth(36);
+        tabla.getColumn("Rnd_Llegada_Auto").setMinWidth(100);
+        tabla.getColumn("TpoELLg").setMinWidth(45);
         tabla.getColumn("Proximo_Auto").setMinWidth(100);
-        tabla.getColumn("Nro_FinEst").setMinWidth(80);
-        tabla.getColumn("Fin_Estacionamiento").setMinWidth(150);
-        tabla.getColumn("Nro_Sector").setMinWidth(100);
-        tabla.getColumn("Estado_Sector").setMinWidth(150);
-        tabla.getColumn("Fin_Cobro").setMinWidth(75);
-        tabla.getColumn("Caja_Estado").setMinWidth(75);
+        tabla.getColumn("Fin_Estacionamiento_1").setMinWidth(150);
+        tabla.getColumn("Fin_Estacionamiento_2").setMinWidth(150);
+        tabla.getColumn("Fin_Estacionamiento_3").setMinWidth(150);
+        tabla.getColumn("Fin_Estacionamiento_4").setMinWidth(150);
+        tabla.getColumn("Fin_Estacionamiento_5").setMinWidth(150);
+        tabla.getColumn("Fin_Estacionamiento_6").setMinWidth(150);
+        tabla.getColumn("Fin_Estacionamiento_7").setMinWidth(150);
+        tabla.getColumn("Fin_Estacionamiento_8").setMinWidth(150);
+        tabla.getColumn("Fin_Estacionamiento_9").setMinWidth(150);
+        tabla.getColumn("Fin_Estacionamiento_10").setMinWidth(150);
+        tabla.getColumn("Fin_Estacionamiento_11").setMinWidth(150);
+        tabla.getColumn("Estado_Sector_1").setMinWidth(150);
+        tabla.getColumn("Estado_Sector_2").setMinWidth(150);
+        tabla.getColumn("Estado_Sector_3").setMinWidth(150);
+        tabla.getColumn("Estado_Sector_4").setMinWidth(150);
+        tabla.getColumn("Estado_Sector_5").setMinWidth(150);
+        tabla.getColumn("Estado_Sector_6").setMinWidth(150);
+        tabla.getColumn("Estado_Sector_7").setMinWidth(150);
+        tabla.getColumn("Estado_Sector_8").setMinWidth(150);
+        tabla.getColumn("Estado_Sector_9").setMinWidth(150);
+        tabla.getColumn("Estado_Sector_10").setMinWidth(150);
+        tabla.getColumn("Fin_Cobro").setMinWidth(100);
+        tabla.getColumn("Caja_Estado").setMinWidth(120);
         tabla.getColumn("Caja_Cola").setMinWidth(75);
-        tabla.getColumn("Recaudacion").setMinWidth(75);
-        tabla.getColumn("Autos_No_Ingresados").setMinWidth(200);
+        tabla.getColumn("Recaudacion").setMinWidth(150);
+        tabla.getColumn("Autos_No_Ingresados").setMinWidth(150);
         tabla.getColumn("Porc_Utilizacion").setMinWidth(150);
         tabla.getColumn("Recaudacion_Total").setMinWidth(150);
         tabla.getColumn("Porc_UtilizacionTotal").setMinWidth(150);
-        tabla.getColumn("Autos_No_Ingresados_AC").setMinWidth(150);
+        tabla.getColumn("Autos_No_Ingresados_AC").setMinWidth(200);
         tabla.getColumn("Cantidad_Sectores_Ocupados").setMinWidth(200);
-        tabla.getColumn("Autos").setMinWidth(300);
+        tabla.getColumn("Auto").setMinWidth(150);
+        tabla.getColumn("Estado").setMinWidth(150);
+        tabla.getColumn("PrecioXMinutos").setMinWidth(120);
+
+        
     }
 
     @SuppressWarnings("unchecked")
@@ -204,7 +225,8 @@ public class Principal extends javax.swing.JFrame {
             }
         ));
         tabla.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
-        tabla.setColumnSelectionAllowed(true);
+        tabla.setCellSelectionEnabled(false);
+        tabla.setRowSelectionAllowed(true);
         jScrollPane1.setViewportView(tabla);
 
         lblResultadoPrueba.setFont(new java.awt.Font("Cambria Math", 1, 14)); // NOI18N

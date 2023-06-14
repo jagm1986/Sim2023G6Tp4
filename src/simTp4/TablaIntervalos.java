@@ -2,6 +2,7 @@ package simTp4;
 
 import Eventos.EventoFinEstacionamiento;
 import ObjetosPermanentes.Sector;
+import ObjetosTemporales.Auto;
 import enums.EstadoAuto;
 import java.text.DecimalFormat;
 import java.util.List;
@@ -25,77 +26,135 @@ public class TablaIntervalos extends DefaultTableModel {
     }
 
     private void cargarDatos(List<PlayaEstacionamiento> filasTabla) {
-        Object[][] matrizTabla = new Object[calcularCantidadFilas(filasTabla)][28]; // Crea la tabla de tamaño cantidadIntervalos+1X4
+        Object[][] matrizTabla = new Object[calcularCantidadFilas(filasTabla)][78]; // Crea la tabla de tamaño cantidadIntervalos+1X4
         int i = 0;
+       
 
         for (PlayaEstacionamiento simulacion : filasTabla) //Recorre los intervalos
         {
 
             matrizTabla[i][0] = simulacion.getNroSimulacion();//Nro sim
-            matrizTabla[i][1] = simulacion.getReloj();//reloj
+            matrizTabla[i][1] = simulacion.getReloj();//Reloj
 
-            matrizTabla[i][2] = simulacion.getEventoName();
-            matrizTabla[i][3] = simulacion.getRndTipoCoche();
-            matrizTabla[i][4] = simulacion.getTipoCoche();
-            matrizTabla[i][5] = simulacion.getPrecio();
-            matrizTabla[i][6] = simulacion.getRndMinutosEstacionamiento();
-            matrizTabla[i][7] = simulacion.getMinutos();
+            matrizTabla[i][2] = simulacion.getEventoName(); //Evento
+            matrizTabla[i][3] = simulacion.getRndTipoCoche();//RND
+            matrizTabla[i][4] = simulacion.getTipoCoche();//Tipo Coche
+            matrizTabla[i][5] = simulacion.getPrecio(); //Precio
+            matrizTabla[i][6] = simulacion.getRndMinutosEstacionamiento(); //RND
+            matrizTabla[i][7] = simulacion.getMinutos(); //Minutos
 
-            matrizTabla[i][8] = simulacion.getEventoLLegadaAuto().getRnd();
-            matrizTabla[i][9] = simulacion.getEventoLLegadaAuto().getTiempoEntreLlegadas();
-            matrizTabla[i][10] = simulacion.getEventoLLegadaAuto().getProximoAuto();
+            //Evento Llegada auto
+            matrizTabla[i][8] = simulacion.getEventoLLegadaAuto().getRnd(); //RND
+            matrizTabla[i][9] = simulacion.getEventoLLegadaAuto().getTiempoEntreLlegadas();//Tiempo entre llegadas de auto
+            matrizTabla[i][10] = simulacion.getEventoLLegadaAuto().getProximoAuto();//Proximo auto
 
+            //Evento Fin Estacionamiento
             int iAnteriorAlLoop = i;
+            int filas = 10;
             for (EventoFinEstacionamiento finEstacionamiento : simulacion.getEventosFinEstacionamiento()) {
-                i++;
-                int j = finEstacionamiento.getNro();
-                matrizTabla[i][11] = j;
-                matrizTabla[i][12] = finEstacionamiento.getFinEstacionamiento();
+              //  i++;
+               // filas ++;
+               // int j = finEstacionamiento.getNro();
+               // matrizTabla[i][filas] = j; //Nro estacionamieno
+                filas ++;
+                matrizTabla[i][filas] = finEstacionamiento.getFinEstacionamiento(); //Fin estacionamiento
 
             }
 
-            i = iAnteriorAlLoop;
+           // i = iAnteriorAlLoop;
             for (Sector sector : simulacion.getSectores()) {
-                i++;
-                int j = sector.getId();
-                matrizTabla[i][13] = j;
-                matrizTabla[i][14] = sector.getEstadoSector();
+              //  i++;
+               // filas ++;
+                //int j = sector.getId();
+                //matrizTabla[i][filas] = j; //Nro Sector
+                filas ++;
+                matrizTabla[i][filas] = sector.getEstadoSector(); //Estado sector
 
             }
 
-            i = iAnteriorAlLoop;
+           // i = iAnteriorAlLoop;
 
-            matrizTabla[i][15] = simulacion.getEventoFinCobro() != null ? simulacion.getEventoFinCobro().getFinAtCobro() : 0;
-            matrizTabla[i][16] = simulacion.getCajaCobro().getEstadoCaja();
-            matrizTabla[i][17] = simulacion.getCajaCobro().getCola();
-            matrizTabla[i][18] = simulacion.getVariablesEstadisticas().getRecaudacion();
-            matrizTabla[i][19] = simulacion.getVariablesEstadisticas().getCantidadAutosNoIngresados();
-            matrizTabla[i][20] = df.format(simulacion.getVariablesEstadisticas().getPorcentajeUtilizacionPlaya());
+            filas ++;
+            matrizTabla[i][filas] = simulacion.getEventoFinCobro() != null ? simulacion.getEventoFinCobro().getFinAtCobro() : 0; //Fin Cobro
+            filas ++;
+            matrizTabla[i][filas] = simulacion.getCajaCobro().getEstadoCaja(); //Estado caja
+            filas ++;
+            matrizTabla[i][filas] = simulacion.getCajaCobro().getCola(); //cola caja
+            filas ++;
+            matrizTabla[i][filas] = simulacion.getVariablesEstadisticas().getRecaudacion(); //Recaudacion individual
+            filas ++;
+            matrizTabla[i][filas] = simulacion.getVariablesEstadisticas().getCantidadAutosNoIngresados(); //Cantidad de autos no ingresados
+            filas ++;
+            matrizTabla[i][filas] = df.format(simulacion.getVariablesEstadisticas().getPorcentajeUtilizacionPlaya()); // Porcentaje de utilizacion individual
 
-            matrizTabla[i][21] = df.format(simulacion.getVariablesEstadisticas().getRecaudacionAC());
-            matrizTabla[i][22] = df.format(simulacion.getVariablesEstadisticas().getPorcentajeUtilizacionPlataAC());
-            matrizTabla[i][23] = simulacion.getVariablesEstadisticas().getCantidadAutosNoIngresadosAC();
-            matrizTabla[i][24] = simulacion.getCantidadOcupados();
+            filas ++;
+            matrizTabla[i][filas] = df.format(simulacion.getVariablesEstadisticas().getRecaudacionAC()); //Recaudacion total
+            filas ++;
+            matrizTabla[i][filas] = df.format(simulacion.getVariablesEstadisticas().getPorcentajeUtilizacionPlataAC()); // Porcentaje utilizacion playa total
+            filas ++;
+            matrizTabla[i][filas] = simulacion.getVariablesEstadisticas().getCantidadAutosNoIngresadosAC(); //Cantidad autos no ingresados total
+            filas ++;
+            matrizTabla[i][filas] = simulacion.getCantidadOcupados(); //Cantidad autos ocupados
 
-            i = iAnteriorAlLoop;
-            for (Map.Entry<Integer, EstadoAuto> entry : simulacion.getAutosTotales().entrySet()) {
+           // i = iAnteriorAlLoop;
+            for (Map.Entry<Integer, Auto> entry : simulacion.getAutosTotales().entrySet()) {
 
-                i++;
-                matrizTabla[i][25] = "PATENTE: " + entry.getKey() + ": " + entry.getValue() ;
+             //   i++;
+                filas ++;
+                matrizTabla[i][filas] = "PATENTE: " + entry.getKey() ; //Auto
+                filas ++;
+                matrizTabla[i][filas] = entry.getValue().getEstadoAuto() ;//Estado
+                filas ++;
+                matrizTabla[i][filas] = entry.getValue().getPrecioXMinutos();//PrecioXMinutos
 
             }
 
-            i = iAnteriorAlLoop + 1;
+            //i = iAnteriorAlLoop + 1;
 
-            int j = simulacion.getAutosTotales().size() > 15 ? simulacion.getAutosTotales().size() : 15;
-            i = i + j;
+           // int j = simulacion.getAutosTotales().size() > 15 ? simulacion.getAutosTotales().size() : 15;
+           // i = i + j;
+           i ++;
         }
 
-        String[] NombresDeColumnas = new String[]{"Nro", "Reloj", "Evento", "RndTC",
-            "Tipo_Coche", "Precio", "Rnd_Min", "Minutos", "Rnd_Llegada_Auto",
-            "TpoELLg", "Proximo_Auto", "Nro_FinEst", "Fin_Estacionamiento", "Nro_Sector",
-            "Estado_Sector", "Fin_Cobro", "Caja_Estado", "Caja_Cola", "Recaudacion", "Autos_No_Ingresados", "Porc_Utilizacion",
-            "Recaudacion_Total", "Porc_UtilizacionTotal", "Autos_No_Ingresados_AC", "Cantidad_Sectores_Ocupados", "Autos"
+        String[] NombresDeColumnas = new String[]{
+            "Nro", "Reloj", "Evento", "Rnd", "Tipo_Coche", "Precio", "Rnd", "Minutos",
+            
+            "Rnd_Llegada_Auto", "TpoELLg", "Proximo_Auto",
+            
+            "Fin_Estacionamiento_1",
+            "Fin_Estacionamiento_2",
+            "Fin_Estacionamiento_3",
+            "Fin_Estacionamiento_4",
+            "Fin_Estacionamiento_5",
+            "Fin_Estacionamiento_6",
+            "Fin_Estacionamiento_7",
+            "Fin_Estacionamiento_8",
+            "Fin_Estacionamiento_9",
+            "Fin_Estacionamiento_10",
+            "Fin_Estacionamiento_11",
+            
+            "Estado_Sector_1",
+            "Estado_Sector_2",
+            "Estado_Sector_3",
+            "Estado_Sector_4",
+            "Estado_Sector_5",
+            "Estado_Sector_6",
+            "Estado_Sector_7",
+            "Estado_Sector_8",
+            "Estado_Sector_9",
+            "Estado_Sector_10",
+            
+            "Fin_Cobro", "Caja_Estado", "Caja_Cola",
+            
+            "Recaudacion", "Autos_No_Ingresados", "Porc_Utilizacion",
+          
+            "Recaudacion_Total", "Porc_UtilizacionTotal", "Autos_No_Ingresados_AC", "Cantidad_Sectores_Ocupados", 
+            
+            "Auto", "Estado", "PrecioXMinutos", "Auto","Estado", "PrecioXMinutos",
+            "Auto","Estado", "PrecioXMinutos","Auto","Estado", "PrecioXMinutos",
+            "Auto","Estado", "PrecioXMinutos","Auto","Estado", "PrecioXMinutos",
+            "Auto","Estado", "PrecioXMinutos","Auto","Estado", "PrecioXMinutos",
+            "Auto","Estado", "PrecioXMinutos","Auto","Estado", "PrecioXMinutos","Auto","Estado", "PrecioXMinutos",
         };
 
         this.setDataVector(matrizTabla, NombresDeColumnas);
@@ -104,9 +163,9 @@ public class TablaIntervalos extends DefaultTableModel {
 
     private Integer calcularCantidadFilas(List<PlayaEstacionamiento> filasTabla) {
         Integer cantidadFilas = filasTabla.size();
-        for (PlayaEstacionamiento sim : filasTabla) {
-            cantidadFilas += (sim.getEventosFinEstacionamiento().size()) + 4 + sim.getAutosTotales().size();
-        }
+       /* for (PlayaEstacionamiento sim : filasTabla) {
+            cantidadFilas += (sim.getEventosFinEstacionamiento().size());
+        }*/
         return cantidadFilas;
     }
 

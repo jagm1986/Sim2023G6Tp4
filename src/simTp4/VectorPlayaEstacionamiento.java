@@ -72,7 +72,7 @@ public class VectorPlayaEstacionamiento {
         if (N > 1) {
 
             for (int i = 1; i < cantidadSimulaciones + 1; i++) {
-              
+
                 simulacion = new PlayaEstacionamiento();
 
                 simulacionAnterior = simulaciones.get(i - 1);
@@ -152,7 +152,7 @@ public class VectorPlayaEstacionamiento {
         Map<Double, Auto> autosEsperandoCobro = new HashMap<>();
         simulacion.setAutosEsperandoCobro(autosEsperandoCobro);
 
-        Map<Integer, EstadoAuto> autosTotales = new HashMap<>();
+        Map<Integer, Auto> autosTotales = new HashMap<>();
         simulacion.setAutosTotales(autosTotales);
 
         ArrayList<Auto> autosTotalesList = new ArrayList<>();
@@ -166,7 +166,7 @@ public class VectorPlayaEstacionamiento {
     private void procesarEventoLlegadaAuto(PlayaEstacionamiento simulacion, PlayaEstacionamiento simulacionAnterior, Random rndTipoCoche, Random rndMinutosEstacionamiento,
             TablaProbabilidad probabilidadesTipoCocheYPrecio, TablaProbabilidad probabilidadesMinutosEstacionamiento, int nroAuto) {
 
-        Map<Integer, EstadoAuto> autosTotales = copyAndSetNuevoMapParaAutosTotalesNuevosObjetos(simulacionAnterior.getAutosTotales());
+        Map<Integer, Auto> autosTotales = copyAndSetNuevoMapParaAutosTotalesNuevosObjetos(simulacionAnterior.getAutosTotales());
         simulacion.setAutosTotales(autosTotales);
 
         Map<Integer, Auto> autosMapeadosNuevaSim = new HashMap<>();
@@ -252,8 +252,7 @@ public class VectorPlayaEstacionamiento {
                 .id(nroAuto)
                 .nroFinEstacionamiento(eventoFinEstacionamientoLibre != null ? eventoFinEstacionamientoLibre.getNro() : 0).build();
 
-        autosTotales.put(nroAuto, EstadoAuto.ESTACIONADO
-                .setGetValue((eventoFinEstacionamientoLibre != null ? String.valueOf(eventoFinEstacionamientoLibre.getNro()) : "0")));
+        autosTotales.put(nroAuto, auto);
         simulacion.setAutosTotales(autosTotales);
 
         autosMapeadosNuevaSim.put((eventoFinEstacionamientoLibre != null ? eventoFinEstacionamientoLibre.getNro() : 0), auto);
@@ -266,7 +265,7 @@ public class VectorPlayaEstacionamiento {
 
     private void procesarEventoFinEstacionamiento(PlayaEstacionamiento simulacion, PlayaEstacionamiento simulacionAnterior, double tpoCobro) {
 
-        Map<Integer, EstadoAuto> autosTotales = copyAndSetNuevoMapParaAutosTotalesNuevosObjetos(simulacionAnterior.getAutosTotales());
+        Map<Integer, Auto> autosTotales = copyAndSetNuevoMapParaAutosTotalesNuevosObjetos(simulacionAnterior.getAutosTotales());
         simulacion.setAutosTotales(autosTotales);
 
         Map<Double, Auto> autosEsperandoCobro = new HashMap<>();
@@ -281,7 +280,11 @@ public class VectorPlayaEstacionamiento {
                 .proximoAuto(simulacionAnterior.getEventoLLegadaAuto().getProximoAuto())
                 .build());
 
-        simulacion.setCajaCobro(simulacionAnterior.getCajaCobro());
+        simulacion.setCajaCobro(CajaCobro.builder()
+                .id(simulacionAnterior.getCajaCobro().getId())
+                .cola(simulacionAnterior.getCajaCobro().getCola())
+                .estadoCaja(simulacionAnterior.getCajaCobro().getEstadoCaja())
+                .build());
 
         List<EventoFinEstacionamiento> listaEventosFinEstacionamiento = new ArrayList<>();
         listaEventosFinEstacionamiento.addAll(simulacionAnterior.getEventosFinEstacionamiento());
@@ -297,15 +300,42 @@ public class VectorPlayaEstacionamiento {
         double precioXMinutos = 0;
         Integer nroAuto = 0;
         //Buscamos todos los eventos de fin de estacionamiento para liberar el que sea igual al evento
+
         for (EventoFinEstacionamiento eventoFinEstacionamiento : listaEventosFinEstacionamiento) {
             if (simulacion.getEventoName().equals(Evento.FIN_ESTACIONAMIENTO_.name() + eventoFinEstacionamiento.getNro())) {
 
-                //liberamos el evento fin estacionamiento correspondiente
+                //liberamos el evento fin estacionamiento correspondiente siempre que no haya cola en la caja de cobro
                 EventoFinEstacionamiento eventoFinEstacionamientoAModificar = EventoFinEstacionamiento.builder()
-                        .nro(eventoFinEstacionamiento.getNro()).finEstacionamiento(0).build();
+                        .nro(eventoFinEstacionamiento.getNro())
+                        .cantidadOcupados(eventoFinEstacionamiento.getCantidadOcupados())
+                        .tiempoEstacionamiento(eventoFinEstacionamiento.getTiempoEstacionamiento())
+                        .finEstacionamiento(0)
+                        .build();
                 listaEventosFinEstacionamiento.remove(eventoFinEstacionamiento);
                 listaEventosFinEstacionamiento.add(eventoFinEstacionamientoAModificar);
                 Collections.sort(listaEventosFinEstacionamiento, EventoFinEstacionamiento.FinEstacionamientoComparator);
+
+                //liberamos el sector siempre que no este ocupado la caja
+                if (simulacionAnterior.getCajaCobro().getEstadoCaja().equals(Estado.LIBRE)) {
+
+                    for (Sector sector : listaSector) {
+                        if (sector.getId() == eventoFinEstacionamientoAModificar.getNro()) {
+
+                            List<Sector> sectores = new ArrayList<>();
+                            sectores.addAll(simulacionAnterior.getSectores());
+                            simulacion.setSectores(sectores);
+
+                            Sector sectorLibre = new Sector();
+                            sectorLibre.setId(sector.getId());
+                            sectorLibre.setEstadoSector(Estado.LIBRE);
+                            simulacion.setCantidadOcupados(simulacionAnterior.getCantidadOcupados() == 0 ? 0 : simulacionAnterior.getCantidadOcupados() - 1);
+                            sectores.add(sectorLibre);
+                            sectores.remove(sector);
+                            Collections.sort(sectores, Sector.SectorComparator);
+                            break;
+                        }
+                    }
+                }
 
                 autoMap = autosMapeadosNuevaSim.get(eventoFinEstacionamientoAModificar.getNro());
                 nroEstacionamiento = eventoFinEstacionamientoAModificar.getNro();
@@ -315,24 +345,6 @@ public class VectorPlayaEstacionamiento {
 
                 autosEsperandoCobro.put(autoMap.getHoraEntradaCobro(), autoMap);
 
-                //liberamos el sector
-                for (Sector sector : listaSector) {
-                    if (sector.getId() == eventoFinEstacionamientoAModificar.getNro()) {
-
-                        List<Sector> sectores = new ArrayList<>();
-                        sectores.addAll(simulacionAnterior.getSectores());
-                        simulacion.setSectores(sectores);
-
-                        Sector sectorLibre = new Sector();
-                        sectorLibre.setId(sector.getId());
-                        sectorLibre.setEstadoSector(Estado.LIBRE);
-                        simulacion.setCantidadOcupados(simulacionAnterior.getCantidadOcupados() == 0 ? 0 : simulacionAnterior.getCantidadOcupados() - 1);
-                        sectores.add(sectorLibre);
-                        sectores.remove(sector);
-                        Collections.sort(sectores, Sector.SectorComparator);
-                        break;
-                    }
-                }
                 break;
             }
         }
@@ -351,7 +363,7 @@ public class VectorPlayaEstacionamiento {
                     .precioXMinutos(precioXMinutos)
                     .nroFinEstacionamiento(nroEstacionamiento)
                     .build();
-            autosTotales.put(nroAuto, EstadoAuto.ESPERANDO_COBRO);
+            autosTotales.put(nroAuto, autoModificado);
 
         } else {
             simulacion.setCajaCobro(CajaCobro.builder().estadoCaja(Estado.OCUPADO).build());
@@ -370,7 +382,26 @@ public class VectorPlayaEstacionamiento {
                     .auto(autoMap)
                     .build();
             simulacion.setAutoSiendoCobrado(autoModificado);
-            autosTotales.put(nroAuto, EstadoAuto.SIENDO_COBRADO);
+            autosTotales.put(nroAuto, autoModificado);
+
+            //liberamos el sector porque el auto fue a la caixa
+            for (Sector sector : listaSector) {
+                if (sector.getId() == autoModificado.getNroFinEstacionamiento()) {
+
+                    List<Sector> sectores = new ArrayList<>();
+                    sectores.addAll(simulacionAnterior.getSectores());
+                    simulacion.setSectores(sectores);
+
+                    Sector sectorLibre = new Sector();
+                    sectorLibre.setId(sector.getId());
+                    sectorLibre.setEstadoSector(Estado.LIBRE);
+                    simulacion.setCantidadOcupados(simulacionAnterior.getCantidadOcupados() == 0 ? 0 : simulacionAnterior.getCantidadOcupados() - 1);
+                    sectores.add(sectorLibre);
+                    sectores.remove(sector);
+                    Collections.sort(sectores, Sector.SectorComparator);
+                    break;
+                }
+            }
 
         }
 
@@ -388,7 +419,7 @@ public class VectorPlayaEstacionamiento {
                 .cantidadAutosNoIngresadosAC(simulacionAnterior.getVariablesEstadisticas().getCantidadAutosNoIngresadosAC())
                 .recaudacion(simulacionAnterior.getVariablesEstadisticas().getRecaudacion())
                 .build());
-        
+
         simulacion.getVariablesEstadisticas().setPorcentajeUtilizacionPlaya(((Integer.valueOf(simulacionAnterior.getCantidadOcupados()).doubleValue()
                 / 10) * 10000 / 10000) * (simulacion.getReloj() - simulacionAnterior.getReloj()));
         this.porcentajeUtilizacionTotal += simulacion.getVariablesEstadisticas().getPorcentajeUtilizacionPlaya();
@@ -399,7 +430,7 @@ public class VectorPlayaEstacionamiento {
 
     private void procesarEventoFinCobro(PlayaEstacionamiento simulacion, PlayaEstacionamiento simulacionAnterior, double tpoCobro) {
 
-        Map<Integer, EstadoAuto> autosTotales = copyAndSetNuevoMapParaAutosTotalesNuevosObjetos(simulacionAnterior.getAutosTotales());
+        Map<Integer, Auto> autosTotales = copyAndSetNuevoMapParaAutosTotalesNuevosObjetos(simulacionAnterior.getAutosTotales());
         simulacion.setAutosTotales(autosTotales);
 
         Map<Double, Auto> autosEsperandoCobro = new HashMap<>();
@@ -413,6 +444,9 @@ public class VectorPlayaEstacionamiento {
                 .proximoAuto(simulacionAnterior.getEventoLLegadaAuto().getProximoAuto())
                 .build());
         simulacion.setEventosFinEstacionamiento(simulacionAnterior.getEventosFinEstacionamiento());
+        List<Sector> listaSector = new ArrayList<>();
+        listaSector.addAll(simulacionAnterior.getSectores());
+        simulacion.setSectores(listaSector);
 
         Map<Integer, Auto> autosMapeadosNuevaSim = new HashMap<>();
         autosMapeadosNuevaSim.putAll(simulacionAnterior.getAutosMapeados());
@@ -433,6 +467,25 @@ public class VectorPlayaEstacionamiento {
                 }
             }
 
+            //liberamos el sector porque el auto fue a la caixa
+            for (Sector sector : simulacionAnterior.getSectores()) {
+                if (sector.getId() == autoEsperandoCobro.getNroFinEstacionamiento()) {
+
+                    List<Sector> sectores = new ArrayList<>();
+                    sectores.addAll(simulacionAnterior.getSectores());
+                    simulacion.setSectores(sectores);
+
+                    Sector sectorLibre = new Sector();
+                    sectorLibre.setId(sector.getId());
+                    sectorLibre.setEstadoSector(Estado.LIBRE);
+                    simulacion.setCantidadOcupados(simulacionAnterior.getCantidadOcupados() == 0 ? 0 : simulacionAnterior.getCantidadOcupados() - 1);
+                    sectores.add(sectorLibre);
+                    sectores.remove(sector);
+                    Collections.sort(sectores, Sector.SectorComparator);
+                    break;
+                }
+            }
+
             simulacion.setEventoFinCobro(EventoFinCobro.builder()
                     .tiempoCobro(tpoCobro)
                     .finAtCobro(simulacion.getReloj() + tpoCobro)
@@ -440,7 +493,12 @@ public class VectorPlayaEstacionamiento {
                     .nroEstacionamiento(autoEsperandoCobro.getNroFinEstacionamiento())
                     .auto(autoEsperandoCobro)
                     .build());
-            autosTotales.put(autoEsperandoCobro.getId(), EstadoAuto.SIENDO_COBRADO);
+            autosTotales.put(autoEsperandoCobro.getId(), Auto.builder()
+                    .estadoAuto(EstadoAuto.SIENDO_COBRADO)
+                    .id(autoEsperandoCobro.getId())
+                    .nroFinEstacionamiento(autoEsperandoCobro.getNroFinEstacionamiento())
+                    .precioXMinutos(autoEsperandoCobro.getPrecioXMinutos()).build());
+
             autosEsperandoCobro.remove(autoEsperandoCobro.getHoraEntradaCobro());
 
         } else {
@@ -460,8 +518,7 @@ public class VectorPlayaEstacionamiento {
                 .cantidadAutosNoIngresadosAC(simulacionAnterior.getVariablesEstadisticas().getCantidadAutosNoIngresadosAC())
                 .recaudacion(simulacionAnterior.getVariablesEstadisticas().getRecaudacion())
                 .build());
-        
-        simulacion.setSectores(simulacionAnterior.getSectores());
+
         simulacion.getVariablesEstadisticas().setRecaudacion(simulacionAnterior.getEventoFinCobro().getAuto().getPrecioXMinutos());
         this.recaudacionTotal += Math.floor(simulacion.getVariablesEstadisticas().getRecaudacion() * 100 / 100);
         simulacion.getVariablesEstadisticas().setRecaudacionAC(recaudacionTotal);
@@ -472,30 +529,14 @@ public class VectorPlayaEstacionamiento {
         simulaciones.add(simulacion);
     }
 
-    public Map<Integer, EstadoAuto> copyAndSetNuevoMapParaAutosTotalesNuevosObjetos(Map<Integer, EstadoAuto> autosTotales) {
-        Map<Integer, EstadoAuto> autosTotalesAux = new HashMap<>(autosTotales.size());
+    public Map<Integer, Auto> copyAndSetNuevoMapParaAutosTotalesNuevosObjetos(Map<Integer, Auto> autosTotales) {
+        Map<Integer, Auto> autosTotalesAux = new HashMap<>(autosTotales.size());
 
-        for (Map.Entry<Integer, EstadoAuto> entry : autosTotales.entrySet()) {
+        for (Map.Entry<Integer, Auto> entry : autosTotales.entrySet()) {
 
-            EstadoAuto estadoAnteriorAuto = entry.getValue();
+            Auto autoAnterior = entry.getValue();
             Integer nroAutoAnterior = entry.getKey();
-            autosTotalesAux.put(nroAutoAnterior, estadoAnteriorAuto);
-        }
-
-        return autosTotalesAux;
-    }
-
-    public ArrayList<Auto> copyAndSetNuevoArrayListParaAutosTotalesNuevosObjetos(ArrayList<Auto> autosTotales) {
-        ArrayList<Auto> autosTotalesAux = new ArrayList<>();
-
-        for (Auto entry : autosTotales) {
-
-            Auto autoNuevoDelAnterior = Auto.builder().estadoAuto(entry.getEstadoAuto())
-                    .id(entry.getId()).horaEntradaCobro(entry.getHoraEntradaCobro())
-                    .nroFinEstacionamiento(entry.getNroFinEstacionamiento())
-                    .precioXMinutos(entry.getPrecioXMinutos())
-                    .build();
-            autosTotalesAux.add(autoNuevoDelAnterior);
+            autosTotalesAux.put(nroAutoAnterior, autoAnterior);
         }
 
         return autosTotalesAux;
@@ -621,7 +662,8 @@ public class VectorPlayaEstacionamiento {
                 return eventoFinal.getEvento();
             } else {
                 min = simulacionAnterior.getEventoFinCobro().getFinAtCobro();
-                MinimoProxEvento eventoFinal = calcularMinimoDeEventosFinEstacionamiento(min, simulacionAnterior, Evento.FIN_COBRO_.toString());
+                MinimoProxEvento eventoFinal = calcularMinimoDeEventosFinEstacionamiento(min, simulacionAnterior, Evento.FIN_COBRO_.toString() + 
+                        simulacionAnterior.getEventoFinCobro().getAuto().getId());
                 simulacion.setReloj(eventoFinal.getMin());
                 return eventoFinal.getEvento();
             }
@@ -636,7 +678,8 @@ public class VectorPlayaEstacionamiento {
 
     private MinimoProxEvento calcularMinimoDeEventosFinEstacionamiento(double min, PlayaEstacionamiento simulacionAnterior, String evento) {
         for (EventoFinEstacionamiento eventoFinEst : simulacionAnterior.getEventosFinEstacionamiento()) {
-            if (eventoFinEst.getFinEstacionamiento() != 0 && eventoFinEst.getFinEstacionamiento() < min) {
+            if (eventoFinEst.getFinEstacionamiento() != 0
+                    && eventoFinEst.getFinEstacionamiento() < min) {
                 min = eventoFinEst.getFinEstacionamiento();
                 evento = Evento.FIN_ESTACIONAMIENTO_.toString() + eventoFinEst.getNro();
             }
