@@ -383,7 +383,11 @@ public class VectorPlayaEstacionamiento {
 
         simulacion.setEventoFinCobro(eventoFinCobro);
 
-        simulacion.setVariablesEstadisticas(simulacionAnterior.getVariablesEstadisticas());
+        simulacion.setVariablesEstadisticas(VariablesEstadisticas.builder()
+                .cantidadAutosNoIngresados(simulacionAnterior.getVariablesEstadisticas().getCantidadAutosNoIngresados())
+                .cantidadAutosNoIngresadosAC(simulacionAnterior.getVariablesEstadisticas().getCantidadAutosNoIngresadosAC())
+                .recaudacion(simulacionAnterior.getVariablesEstadisticas().getRecaudacion())
+                .build());
         
         simulacion.getVariablesEstadisticas().setPorcentajeUtilizacionPlaya(((Integer.valueOf(simulacionAnterior.getCantidadOcupados()).doubleValue()
                 / 10) * 10000 / 10000) * (simulacion.getReloj() - simulacionAnterior.getReloj()));
@@ -450,8 +454,13 @@ public class VectorPlayaEstacionamiento {
         simulacion.setAutosTotales(autosTotales);
 
         simulacion.setCantidadOcupados(simulacionAnterior.getCantidadOcupados());
-        simulacion.setVariablesEstadisticas(simulacionAnterior.getVariablesEstadisticas());
 
+        simulacion.setVariablesEstadisticas(VariablesEstadisticas.builder()
+                .cantidadAutosNoIngresados(simulacionAnterior.getVariablesEstadisticas().getCantidadAutosNoIngresados())
+                .cantidadAutosNoIngresadosAC(simulacionAnterior.getVariablesEstadisticas().getCantidadAutosNoIngresadosAC())
+                .recaudacion(simulacionAnterior.getVariablesEstadisticas().getRecaudacion())
+                .build());
+        
         simulacion.setSectores(simulacionAnterior.getSectores());
         simulacion.getVariablesEstadisticas().setRecaudacion(simulacionAnterior.getEventoFinCobro().getAuto().getPrecioXMinutos());
         this.recaudacionTotal += Math.floor(simulacion.getVariablesEstadisticas().getRecaudacion() * 100 / 100);
