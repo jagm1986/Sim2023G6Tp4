@@ -1,8 +1,6 @@
 
-package ObjetosTemporales
-        ;
+package ObjetosTemporales;
 
-import ObjetosPermanentes.Sector;
 import enums.EstadoAuto;
 import java.util.Comparator;
 import lombok.AllArgsConstructor;
@@ -24,6 +22,9 @@ public class Auto
     private double precioXMinutos;
     private double horaEntradaCobro;
     private int nroFinEstacionamiento;
+    
+    private int D;
+    private double variableIntegrada;
     
     // Usage of comparator
     public static Comparator<Auto> AutoComparator = new Comparator<Auto>() {

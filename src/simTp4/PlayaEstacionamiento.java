@@ -9,7 +9,6 @@ import Eventos.EventoFinCobro;
 import Eventos.EventoFinEstacionamiento;
 import Eventos.EventoLLegadaAuto;
 import ObjetosPermanentes.CajaCobro;
-import enums.EstadoAuto;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -47,5 +46,8 @@ public class PlayaEstacionamiento {
     private Auto autoSiendoCobrado;
     private Map<Integer, Auto> autosTotales;
     private ArrayList<Auto> autosTotalesList;
+    
+    private int D;
+    private double tiempoCobroIntegracion;
 
 }
