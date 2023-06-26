@@ -48,7 +48,7 @@ public class VectorEcuacionDiferencial {
 
             dD_dt = (this.C + 0.2 * this.T + (Math.pow(t, 2)));
             t_i_mas_1 = t + this.h;
-            D_i_mas_1 = D + (dD_dt * t_i_mas_1);
+            D_i_mas_1 = D + (dD_dt * this.h);
 
             EcuacionDiferencial ecuacionDiferencialAux = EcuacionDiferencial.builder()
                     .t(t)
