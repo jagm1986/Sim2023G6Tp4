@@ -774,19 +774,20 @@ public class Principal extends javax.swing.JFrame {
         Auto auto = null;
         if (simulacionAIntegrar.getEventoName().contains("FIN_EST")
                 || simulacionAIntegrar.getEventoName().contains("FIN_COB")) {
-            
+
             for (EventoFinEstacionamiento eventoFinEstacionamiento : simulacionAIntegrar.getEventosFinEstacionamiento()) {
-            if (simulacionAIntegrar.getEventoName().equals(Evento.FIN_ESTACIONAMIENTO_.name() + eventoFinEstacionamiento.getNro())) {
+                if (simulacionAIntegrar.getEventoName().equals(Evento.FIN_ESTACIONAMIENTO_.name() + eventoFinEstacionamiento.getNro())) {
                     nroAutoAMostrar = eventoFinEstacionamiento.getNro();
                     break;
                 }
-            } 
-            
-            for (Map.Entry<Integer, Auto> entry : simulacionAIntegrar.getAutosTotales().entrySet()) {
-                if(entry.getValue().getNroFinEstacionamiento() == nroAutoAMostrar);
-                auto = entry.getValue();
             }
-            
+
+            for (Map.Entry<Integer, Auto> entry : simulacionAIntegrar.getAutosTotales().entrySet()) {
+                if (entry.getValue().getNroFinEstacionamiento() == nroAutoAMostrar) {
+                    auto = entry.getValue();
+                }
+            }
+
             VectorEcuacionDiferencial vectorEcuacionDiferencial = VectorEcuacionDiferencial.builder()
                     .h(Double.parseDouble(_h.getText()))
                     .C(simulacionAIntegrar.getAutosEsperandoCobro().size())

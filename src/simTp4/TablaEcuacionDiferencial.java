@@ -27,19 +27,19 @@ public class TablaEcuacionDiferencial extends DefaultTableModel {
         for (EcuacionDiferencial simulacion : filasTabla) //Recorre los intervalos
         {
 
-            matrizTabla[i][0] = simulacion.getNroSimulacion() + i;//Nro sim
-            matrizTabla[i][1] = df.format(simulacion.getT());//t
+           // matrizTabla[i][0] = simulacion.getNroSimulacion() + i;//Nro sim
+            matrizTabla[i][0] = df.format(simulacion.getT());//t
 
-            matrizTabla[i][2] = df.format(simulacion.getD()); //D
-            matrizTabla[i][3] = df.format(simulacion.getDDdt());//dD/dt
-            matrizTabla[i][4] = df.format(simulacion.getTimas1());//t(i+1)
-            matrizTabla[i][5] = df.format(simulacion.getDimas1()); //D(i+1)
+            matrizTabla[i][1] = df.format(simulacion.getD()); //D
+            matrizTabla[i][2] = df.format(simulacion.getDDdt());//dD/dt
+            matrizTabla[i][3] = df.format(simulacion.getTimas1());//t(i+1)
+            matrizTabla[i][4] = df.format(simulacion.getDimas1()); //D(i+1)
 
             i++;
         }
 
         String[] NombresDeColumnas = new String[]{
-            "Nro", "t", "D", "dD/dt", "t(i+1)", "D(i+1)",};
+            "t", "D", "dD/dt", "t(i+1)", "D(i+1)",};
 
         this.setDataVector(matrizTabla, NombresDeColumnas);
 
