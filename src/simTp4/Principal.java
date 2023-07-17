@@ -772,8 +772,7 @@ public class Principal extends javax.swing.JFrame {
 
         int nroAutoAMostrar = 0;
         Auto auto = null;
-        if (simulacionAIntegrar.getEventoName().contains("FIN_EST")
-                || simulacionAIntegrar.getEventoName().contains("FIN_COB")) {
+        if (simulacionAIntegrar.getEventoName().contains("FIN_EST")) {
 
             for (EventoFinEstacionamiento eventoFinEstacionamiento : simulacionAIntegrar.getEventosFinEstacionamiento()) {
                 if (simulacionAIntegrar.getEventoName().equals(Evento.FIN_ESTACIONAMIENTO_.name() + eventoFinEstacionamiento.getNro())) {

@@ -400,6 +400,7 @@ public class VectorPlayaEstacionamiento {
             autosTotales.put(nroAuto, autoModificado);
 
         } else {
+            
             simulacion.setCajaCobro(CajaCobro.builder().estadoCaja(Estado.OCUPADO).build());
             autoModificado = Auto.builder()
                     .id(nroAuto)
@@ -543,13 +544,16 @@ public class VectorPlayaEstacionamiento {
                     .nroEstacionamiento(autoEsperandoCobro.getNroFinEstacionamiento())
                     .auto(autoEsperandoCobro)
                     .build());
+            if(simulacion.getCajaCobro().getCola() > 1){
+                System.out.println("");
+            }
             autosTotales.put(autoEsperandoCobro.getId(), Auto.builder()
                     .estadoAuto(EstadoAuto.SIENDO_COBRADO)
                     .id(autoEsperandoCobro.getId())
                     .nroFinEstacionamiento(autoEsperandoCobro.getNroFinEstacionamiento())
                     .precioXMinutos(autoEsperandoCobro.getPrecioXMinutos())
                     .D(autoEsperandoCobro.getD())
-                    .variableIntegrada(tiempoDeCobroIntegrado)
+                    .variableIntegrada(autoEsperandoCobro.getVariableIntegrada())
                     .build());
 
             autosEsperandoCobro.remove(autoEsperandoCobro.getHoraEntradaCobro());
